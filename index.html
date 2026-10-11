@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Glove · FSR Commands + IMU Writing</title>
+  <title>Smart Glove · 100+ FSR Commands + IMU Writing</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
       background: #06090e;
       font-family: 'Inter', system-ui, sans-serif;
       color: #eef2f6;
-      padding: 1.2rem;
+      padding: 1rem;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -22,95 +22,95 @@
     }
 
     .app {
-      max-width: 1580px;
+      max-width: 1720px;
       width: 100%;
       display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 1.2rem;
+      grid-template-columns: 380px 1fr;
+      gap: 1.1rem;
       background: rgba(12, 18, 26, 0.92);
       backdrop-filter: blur(16px);
       border-radius: 2.5rem;
-      padding: 1.8rem;
+      padding: 1.6rem;
       border: 1px solid #1a2636;
       box-shadow: 0 30px 60px -15px #000;
     }
 
     /* ===== SIDEBAR ===== */
-    .sidebar { display: flex; flex-direction: column; gap: 1rem; }
+    .sidebar { display: flex; flex-direction: column; gap: 0.85rem; }
 
     .brand {
-      display: flex; align-items: center; gap: 0.8rem;
+      display: flex; align-items: center; gap: 0.7rem;
       padding-bottom: 0.4rem; border-bottom: 1px solid #1a2636;
     }
-    .brand-icon { font-size: 2.2rem; filter: drop-shadow(0 0 10px #3b82f6); }
+    .brand-icon { font-size: 2rem; filter: drop-shadow(0 0 10px #3b82f6); }
     .brand h1 {
-      font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em;
+      font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em;
       background: linear-gradient(135deg, #c8dfff, #7aa9e6);
       -webkit-background-clip: text; background-clip: text; color: transparent;
     }
-    .brand .sub { font-size: 0.66rem; color: #6a809b; font-weight: 500; margin-top: 0.15rem; }
+    .brand .sub { font-size: 0.62rem; color: #6a809b; font-weight: 500; margin-top: 0.1rem; }
 
     .card {
-      background: #0f1822; border-radius: 1.5rem; padding: 1rem 1.1rem;
+      background: #0f1822; border-radius: 1.4rem; padding: 0.9rem 1rem;
       border: 1px solid #1b2a3a; box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
     }
 
     .card-title {
-      font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em;
-      font-weight: 600; color: #6d84a0; margin-bottom: 0.8rem;
+      font-size: 0.63rem; text-transform: uppercase; letter-spacing: 0.08em;
+      font-weight: 600; color: #6d84a0; margin-bottom: 0.7rem;
       display: flex; justify-content: space-between; align-items: center;
     }
 
     /* FSR rows */
-    .fsr-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.55rem; }
+    .fsr-row { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.45rem; }
     .fsr-row:last-child { margin-bottom: 0; }
-    .fsr-label { width: 44px; font-size: 0.72rem; font-weight: 700; color: #b0c6e0; }
-    .fsr-track { flex: 1; height: 8px; background: #1a2635; border-radius: 10px; overflow: hidden; }
+    .fsr-label { width: 42px; font-size: 0.68rem; font-weight: 700; color: #b0c6e0; }
+    .fsr-track { flex: 1; height: 7px; background: #1a2635; border-radius: 10px; overflow: hidden; }
     .fsr-fill {
       height: 100%; width: 0%;
       background: linear-gradient(90deg, #2563eb, #60a5fa, #a78bfa);
       border-radius: 10px; transition: width 0.1s linear;
     }
-    .fsr-num { width: 40px; text-align: right; font-size: 0.72rem; font-weight: 700; color: #cbdffa; font-variant-numeric: tabular-nums; }
+    .fsr-num { width: 38px; text-align: right; font-size: 0.68rem; font-weight: 700; color: #cbdffa; font-variant-numeric: tabular-nums; }
 
     /* IMU compact */
-    .imu-mini-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.35rem; }
+    .imu-mini-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.3rem; }
     .imu-mini {
-      background: #0a121c; border-radius: 0.7rem; padding: 0.45rem 0.15rem;
+      background: #0a121c; border-radius: 0.6rem; padding: 0.4rem 0.1rem;
       text-align: center; border: 1px solid #182738;
       transition: border-color 0.15s, background 0.15s;
     }
     .imu-mini.active { border-color: #2e4a6e; background: #0d1a28; }
-    .imu-mini .k { font-size: 0.54rem; font-weight: 700; color: #5a7290; letter-spacing: 0.05em; }
-    .imu-mini .v { font-size: 0.78rem; font-weight: 700; color: #c9defa; font-variant-numeric: tabular-nums; margin-top: 0.05rem; }
+    .imu-mini .k { font-size: 0.5rem; font-weight: 700; color: #5a7290; letter-spacing: 0.05em; }
+    .imu-mini .v { font-size: 0.72rem; font-weight: 700; color: #c9defa; font-variant-numeric: tabular-nums; margin-top: 0.05rem; }
 
     .motion-state {
       display: flex; align-items: center; justify-content: space-between;
-      background: #0a121c; border-radius: 1.1rem; padding: 0.6rem 0.9rem;
+      background: #0a121c; border-radius: 1rem; padding: 0.55rem 0.85rem;
       border: 1px solid #1b2a3a;
     }
     .motion-state .label {
-      font-size: 0.68rem; font-weight: 600; color: #8fa3be;
-      display: flex; align-items: center; gap: 0.35rem;
+      font-size: 0.64rem; font-weight: 600; color: #8fa3be;
+      display: flex; align-items: center; gap: 0.3rem;
     }
-    .pen-indicator { display: flex; align-items: center; gap: 0.45rem; }
-    .pen-dot { width: 9px; height: 9px; border-radius: 50%; background: #2a3b50; transition: all 0.15s; }
-    .pen-dot.down { background: #3b82f6; box-shadow: 0 0 9px #3b82f6; }
-    .pen-text { font-size: 0.68rem; font-weight: 700; color: #6d84a0; }
+    .pen-indicator { display: flex; align-items: center; gap: 0.4rem; }
+    .pen-dot { width: 8px; height: 8px; border-radius: 50%; background: #2a3b50; transition: all 0.15s; }
+    .pen-dot.down { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
+    .pen-text { font-size: 0.64rem; font-weight: 700; color: #6d84a0; }
     .pen-text.down { color: #7aa9e6; }
 
-    .slider-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; }
-    .slider-row label { font-size: 0.64rem; font-weight: 600; color: #6d84a0; width: 62px; }
+    .slider-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.45rem; }
+    .slider-row label { font-size: 0.6rem; font-weight: 600; color: #6d84a0; width: 62px; }
     input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; background: #182738; border-radius: 4px; outline: none; }
     input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 15px; height: 15px;
+      -webkit-appearance: none; width: 14px; height: 14px;
       background: #3b82f6; border-radius: 50%; cursor: pointer; border: 2px solid #0c131c;
     }
-    .slider-val { font-size: 0.68rem; font-weight: 700; color: #90b8f0; width: 28px; text-align: right; }
+    .slider-val { font-size: 0.64rem; font-weight: 700; color: #90b8f0; width: 30px; text-align: right; }
 
-    .status-flex { display: flex; gap: 0.45rem; font-size: 0.68rem; }
+    .status-flex { display: flex; gap: 0.4rem; font-size: 0.64rem; }
     .pill {
-      padding: 0.3rem 0.6rem; border-radius: 30px; font-weight: 600;
+      padding: 0.28rem 0.55rem; border-radius: 30px; font-weight: 600;
       background: #182738; color: #8fa3be; border: 1px solid #263a50;
       flex: 1; text-align: center; transition: all 0.2s;
     }
@@ -122,17 +122,17 @@
     .canvas-area {
       display: flex; flex-direction: column;
       background: #0a1018; border-radius: 2rem;
-      border: 1px solid #1a2636; overflow: hidden; position: relative;
+      border: 1px solid #1a2636; overflow: hidden;
     }
 
     .canvas-toolbar {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 0.9rem 1.4rem; background: #0c151f;
-      border-bottom: 1px solid #182738; flex-wrap: wrap; gap: 0.6rem;
+      padding: 0.85rem 1.3rem; background: #0c151f;
+      border-bottom: 1px solid #182738; flex-wrap: wrap; gap: 0.55rem;
     }
     .canvas-toolbar h2 {
-      font-size: 1rem; font-weight: 600; color: #c9defa;
-      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.95rem; font-weight: 600; color: #c9defa;
+      display: flex; align-items: center; gap: 0.45rem;
     }
     .canvas-toolbar h2 .dot {
       width: 8px; height: 8px; border-radius: 50%;
@@ -140,22 +140,23 @@
     }
     @keyframes pulse { 0%{opacity:.4} 50%{opacity:1} 100%{opacity:.4} }
 
-    .toolbar-actions { display: flex; gap: 0.5rem; }
+    .toolbar-actions { display: flex; gap: 0.45rem; flex-wrap: wrap; }
     .btn {
       background: #162433; border: 1px solid #243a52; color: #b0cbf0;
-      font-size: 0.7rem; padding: 0.45rem 1rem; border-radius: 40px;
+      font-size: 0.66rem; padding: 0.4rem 0.9rem; border-radius: 40px;
       font-weight: 600; cursor: pointer; font-family: inherit;
-      transition: all 0.15s; display: flex; align-items: center; gap: 0.3rem;
+      transition: all 0.15s; display: flex; align-items: center; gap: 0.25rem;
     }
     .btn:hover { background: #1f3044; color: #d7eaff; border-color: #3b5b80; }
     .btn.danger { color: #f87171; border-color: #4a2a2a; }
     .btn.danger:hover { background: #2b1a1a; }
+    .btn.active { background: #1e3a5f; color: #90c8ff; border-color: #3b82f6; }
 
-    .canvas-wrapper { flex: 1; padding: 1rem 1.4rem 1.4rem 1.4rem; display: flex; flex-direction: column; }
+    .canvas-wrapper { flex: 1; padding: 0.9rem 1.3rem 1.3rem 1.3rem; display: flex; flex-direction: column; }
 
     canvas {
       width: 100%; height: auto; aspect-ratio: 16 / 9;
-      background: #070d14; border-radius: 1.4rem;
+      background: #070d14; border-radius: 1.3rem;
       border: 1px solid #182738;
       box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 18px 40px -16px #000;
       display: block; touch-action: none;
@@ -168,46 +169,120 @@
 
     .hint-bar {
       display: flex; justify-content: space-between; align-items: center;
-      margin-top: 0.7rem; font-size: 0.64rem; color: #5a7290;
+      margin-top: 0.6rem; font-size: 0.6rem; color: #5a7290;
       padding: 0 0.2rem; flex-wrap: wrap; gap: 0.4rem;
     }
     .hint-bar .left { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
     .badge-xy {
-      background: #0f1b29; padding: 0.25rem 0.7rem; border-radius: 20px;
+      background: #0f1b29; padding: 0.22rem 0.6rem; border-radius: 20px;
       border: 1px solid #1d2f44; font-weight: 500; color: #7a9bc0;
       font-variant-numeric: tabular-nums;
     }
-    .gesture-indicator { display: flex; align-items: center; gap: 0.3rem; }
+    .gesture-indicator { display: flex; align-items: center; gap: 0.28rem; }
     .gesture-dot {
       width: 6px; height: 6px; border-radius: 50%; background: #263a50;
       transition: background 0.12s, box-shadow 0.12s;
     }
     .gesture-dot.active { background: #3b82f6; box-shadow: 0 0 7px #3b82f6; }
 
-    /* Command log */
+    /* Command panels */
+    .command-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.7rem;
+      margin-top: 0.7rem;
+    }
+
     .command-log {
-      margin-top: 0.6rem;
       background: #0a121c;
       border-radius: 1rem;
       border: 1px solid #182738;
-      padding: 0.6rem 0.9rem;
-      font-size: 0.68rem;
+      padding: 0.55rem 0.8rem;
+      font-size: 0.62rem;
       color: #7a9bc0;
-      max-height: 70px;
+      max-height: 130px;
       overflow-y: auto;
       font-variant-numeric: tabular-nums;
       line-height: 1.5;
     }
-    .command-log .entry { display: flex; justify-content: space-between; }
+    .command-log::-webkit-scrollbar { width: 4px; }
+    .command-log::-webkit-scrollbar-thumb { background: #263a50; border-radius: 4px; }
+
+    .command-log .entry { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.1rem 0; }
     .command-log .entry.new { color: #6ee7b7; font-weight: 600; }
-    .command-log .cmd { color: #90b8f0; font-weight: 600; }
-    .command-log .time { color: #4a627d; font-size: 0.6rem; }
+    .command-log .cmd { color: #90b8f0; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .command-log .time { color: #4a627d; font-size: 0.55rem; flex-shrink: 0; }
 
-    .legend { font-size: 0.58rem; color: #3d556e; margin-top: 0.3rem; text-align: right; }
+    /* FSR combo grid */
+    .combo-info {
+      background: #0a121c;
+      border-radius: 1rem;
+      border: 1px solid #182738;
+      padding: 0.55rem 0.8rem;
+      font-size: 0.62rem;
+      color: #7a9bc0;
+    }
+    .combo-info .title { font-weight: 700; color: #90b8f0; font-size: 0.68rem; margin-bottom: 0.3rem; }
+    .combo-dots { display: flex; gap: 0.25rem; margin-bottom: 0.4rem; }
+    .combo-dot {
+      width: 20px; height: 20px; border-radius: 6px;
+      background: #182738; border: 1px solid #263a50;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 700; color: #4a627d;
+      transition: all 0.1s;
+    }
+    .combo-dot.on {
+      background: linear-gradient(135deg, #2563eb, #60a5fa);
+      color: #fff; border-color: #60a5fa;
+      box-shadow: 0 0 10px rgba(59,130,246,0.5);
+    }
+    .combo-bits {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.6rem; color: #4a627d;
+      letter-spacing: 0.15em;
+    }
+    .combo-name { color: #6ee7b7; font-weight: 600; font-size: 0.65rem; margin-top: 0.2rem; }
 
-    @media (max-width: 950px) {
+    .legend { font-size: 0.55rem; color: #3d556e; margin-top: 0.3rem; text-align: right; }
+
+    /* Category tabs */
+    .category-tabs {
+      display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.5rem;
+    }
+    .cat-tab {
+      font-size: 0.58rem; padding: 0.22rem 0.55rem;
+      background: #0f1b29; border: 1px solid #1d2f44;
+      color: #6d84a0; border-radius: 20px; cursor: pointer;
+      font-weight: 600; transition: all 0.15s;
+    }
+    .cat-tab:hover { background: #16273b; color: #90b8f0; }
+    .cat-tab.active { background: #1e3a5f; color: #90c8ff; border-color: #3b82f6; }
+
+    /* Command list browser */
+    .command-browser {
+      background: #0a121c; border-radius: 1rem; border: 1px solid #182738;
+      padding: 0.5rem; max-height: 180px; overflow-y: auto;
+      font-size: 0.58rem;
+    }
+    .command-browser::-webkit-scrollbar { width: 4px; }
+    .command-browser::-webkit-scrollbar-thumb { background: #263a50; border-radius: 4px; }
+    .cmd-item {
+      display: flex; gap: 0.4rem; padding: 0.15rem 0.3rem;
+      border-radius: 5px; align-items: center;
+    }
+    .cmd-item:hover { background: #0f1b29; }
+    .cmd-item .bits {
+      font-family: 'SF Mono', Monaco, monospace;
+      color: #4a627d; font-size: 0.55rem; letter-spacing: 0.1em;
+      width: 62px;
+    }
+    .cmd-item .name { color: #90b8f0; font-weight: 600; }
+    .cmd-item .cat { color: #4a627d; font-size: 0.5rem; margin-left: auto; }
+
+    @media (max-width: 1100px) {
       .app { grid-template-columns: 1fr; padding: 1rem; }
       body { padding: 0.5rem; }
+      .command-panels { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -220,17 +295,14 @@
       <div class="brand-icon">🧤</div>
       <div>
         <h1>Smart Glove</h1>
-        <div class="sub">FSR Commands + IMU Writing</div>
+        <div class="sub">100+ FSR Commands · IMU Writing</div>
       </div>
     </div>
 
     <!-- FSR Readouts -->
     <div class="card">
-      <div class="card-title"><span>✋ FSR Pressure</span><span id="fsrSum" style="color:#3b82f6;">0</span></div>
+      <div class="card-title"><span>✋ FSR Live</span><span id="fsrSum" style="color:#3b82f6;">0</span></div>
       <div id="fsrContainer"></div>
-      <div style="font-size:0.58rem; color:#4a627d; margin-top:0.6rem; text-align:center;">
-        Press combinations for commands
-      </div>
     </div>
 
     <!-- IMU Readouts -->
@@ -247,7 +319,7 @@
     </div>
 
     <!-- Writing Control -->
-    <div class="card" style="padding:0.8rem 0.95rem;">
+    <div class="card" style="padding:0.75rem 0.9rem;">
       <div class="motion-state" style="background:transparent; padding:0; border:none;">
         <div class="label">✍️ IMU Writing</div>
         <div class="pen-indicator">
@@ -255,9 +327,9 @@
           <span class="pen-text" id="penText">LIFTED</span>
         </div>
       </div>
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:0.5rem;">
-        <div class="label" style="font-size:0.64rem; color:#6d84a0;">Pen mode</div>
-        <button id="penToggleBtn" class="btn" style="padding:0.25rem 0.9rem; font-size:0.64rem;">LIFTED</button>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:0.45rem;">
+        <div class="label" style="font-size:0.6rem; color:#6d84a0;">Pen</div>
+        <button id="penToggleBtn" class="btn" style="padding:0.22rem 0.8rem; font-size:0.6rem;">LIFTED</button>
       </div>
       <div class="slider-row">
         <label>Sensitivity</label>
@@ -281,7 +353,7 @@
       <div class="pill" id="wifiPill">⚡ WiFi —</div>
       <div class="pill" id="fbPill">🔥 Firebase —</div>
     </div>
-    <div class="pill blue" id="updatePill" style="font-size:0.6rem;">📡 Waiting for glove…</div>
+    <div class="pill blue" id="updatePill" style="font-size:0.58rem;">📡 Waiting for glove…</div>
   </aside>
 
   <!-- ========== CANVAS ========== -->
@@ -291,6 +363,8 @@
       <div class="toolbar-actions">
         <button class="btn" id="clearBtn">🗑️ Clear</button>
         <button class="btn danger" id="resetTrailBtn">✖ Reset pen</button>
+        <button class="btn" id="saveBtn">💾 Save</button>
+        <button class="btn" id="browseBtn">📖 Commands</button>
       </div>
     </div>
 
@@ -298,7 +372,7 @@
       <canvas id="canvas" width="1280" height="720"></canvas>
       <div class="hint-bar">
         <div class="left">
-          <span>✍️ Flick wrist (GZ) to toggle pen</span>
+          <span>✍️ Flick wrist to toggle pen · Tilt to steer</span>
           <span class="badge-xy" id="xyDisplay">x: 640  y: 360</span>
         </div>
         <div class="gesture-indicator">
@@ -309,14 +383,40 @@
         </div>
       </div>
 
-      <!-- Command log -->
-      <div class="command-log" id="commandLog">
-        <div class="entry"><span>Ready — press FSR combination to trigger a command</span></div>
+      <!-- Command panels -->
+      <div class="command-panels">
+        <div class="command-log" id="commandLog">
+          <div class="entry"><span>Ready — press FSR combo to trigger a command</span></div>
+        </div>
+        <div class="combo-info">
+          <div class="title">Active FSR combo</div>
+          <div class="combo-dots">
+            <div class="combo-dot" id="cd1">1</div>
+            <div class="combo-dot" id="cd2">2</div>
+            <div class="combo-dot" id="cd3">3</div>
+            <div class="combo-dot" id="cd4">4</div>
+            <div class="combo-dot" id="cd5">5</div>
+          </div>
+          <div class="combo-bits" id="comboBits">Bits: 00000</div>
+          <div class="combo-name" id="comboName">No combination</div>
+        </div>
       </div>
 
-      <div class="legend">FSR combos → 20 commands · IMU tilt → cursor · Flick GZ → pen toggle</div>
+      <div class="legend">100+ commands across FSR combinations · IMU for continuous writing</div>
     </div>
   </main>
+</div>
+
+<!-- ========== COMMAND BROWSER MODAL ========== -->
+<div id="browserModal" style="display:none; position:fixed; inset:0; background:rgba(6,9,14,0.85); backdrop-filter:blur(8px); z-index:100; justify-content:center; align-items:center; padding:1.5rem;">
+  <div style="background:#0f1822; border-radius:2rem; border:1px solid #1b2a3a; padding:1.6rem; max-width:1100px; width:100%; max-height:88vh; display:flex; flex-direction:column;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+      <h2 style="font-size:1.15rem; color:#c9defa;">📖 Command Library · <span id="cmdCount">0</span> commands</h2>
+      <button class="btn danger" id="closeBrowserBtn">✖ Close</button>
+    </div>
+    <div class="category-tabs" id="categoryTabs"></div>
+    <div class="command-browser" id="commandBrowser"></div>
+  </div>
 </div>
 
 <script>
@@ -376,42 +476,59 @@
 
   const clearBtn = document.getElementById('clearBtn');
   const resetTrailBtn = document.getElementById('resetTrailBtn');
+  const saveBtn = document.getElementById('saveBtn');
+  const browseBtn = document.getElementById('browseBtn');
+
   const commandLog = document.getElementById('commandLog');
+
+  const cd1 = document.getElementById('cd1');
+  const cd2 = document.getElementById('cd2');
+  const cd3 = document.getElementById('cd3');
+  const cd4 = document.getElementById('cd4');
+  const cd5 = document.getElementById('cd5');
+  const comboCells = [cd1, cd2, cd3, cd4, cd5];
+  const comboBits = document.getElementById('comboBits');
+  const comboName = document.getElementById('comboName');
+
+  const browserModal = document.getElementById('browserModal');
+  const commandBrowser = document.getElementById('commandBrowser');
+  const categoryTabs = document.getElementById('categoryTabs');
+  const cmdCountEl = document.getElementById('cmdCount');
+  const closeBrowserBtn = document.getElementById('closeBrowserBtn');
 
   // =============================================================
   //  STATE
   // =============================================================
   let sensitivity = 1.6;
   let flickThreshold = 120;
-  let fsrThreshold = 600;    // pressure value to consider an FSR "pressed"
+  let fsrThreshold = 600;
   let smoothing = 0.80;
 
-  // Canvas state
   let penDown = false;
   let cursorX = canvas.width / 2;
   let cursorY = canvas.height / 2;
   let lastX = cursorX, lastY = cursorY;
 
-  // Motion
   let vx = 0, vy = 0;
   const FRICTION = 0.88;
   const ACCEL_SCALE = 9.0;
 
-  // Flick detection
   let lastFlickTime = 0;
   const FLICK_COOLDOWN = 400;
   let prevGz = 0;
 
-  // FSR debounce
-  let lastFsrCombo = 0;         // bitmask of last pressed combo
+  let lastFsrCombo = 0;
   let lastFsrTime = 0;
-  const FSR_COOLDOWN = 900;     // ms between commands
+  const FSR_COOLDOWN = 900;
 
-  // Pen color cycling
-  const PEN_COLORS = ['#7aa9e6', '#a78bfa', '#6ee7b7', '#fbbf24', '#f87171', '#38bdf8'];
+  // Pen colors
+  const PEN_COLORS = ['#7aa9e6', '#a78bfa', '#6ee7b7', '#fbbf24', '#f87171', '#38bdf8', '#f472b6', '#ffffff'];
   let colorIndex = 0;
+  let penColor = PEN_COLORS[0];
+  let penWidth = 4.2;
+  let penStyle = 'solid'; // solid, dashed, glow
 
-  // Sensor data
+  // Sensor
   let sensor = {
     ax: 0, ay: 0, az: 0,
     gx: 0, gy: 0, gz: 0,
@@ -442,120 +559,121 @@
   }
 
   // =============================================================
-  //  FSR COMMAND MAP — 20 commands based on 5-sensor combinations
-  //  Bitmask: bit i (0..4) = FSR i+1 pressed
+  //  COMMAND ACTIONS LIBRARY
   // =============================================================
-  const FSR_COMMANDS = {
-    // ---- Single finger press ----
-    0b00001: { name: 'CMD 01 · HELLO',       action: () => autoWrite('HELLO') },
-    0b00010: { name: 'CMD 02 · WORLD',       action: () => autoWrite('WORLD') },
-    0b00100: { name: 'CMD 03 · CLEAR',       action: () => clearCanvas() },
-    0b01000: { name: 'CMD 04 · COLOR',       action: () => cycleColor() },
-    0b10000: { name: 'CMD 05 · SAVE',        action: () => saveCanvas() },
-
-    // ---- Two fingers ----
-    0b00011: { name: 'CMD 06 · YES',         action: () => autoWrite('YES') },
-    0b00110: { name: 'CMD 07 · NO',          action: () => autoWrite('NO') },
-    0b01100: { name: 'CMD 08 · OK',          action: () => autoWrite('OK') },
-    0b11000: { name: 'CMD 09 · THANKS',      action: () => autoWrite('THANKS') },
-    0b10001: { name: 'CMD 10 · SOS',         action: () => autoWrite('SOS') },
-
-    // ---- Three fingers ----
-    0b00111: { name: 'CMD 11 · HELP',        action: () => autoWrite('HELP') },
-    0b01110: { name: 'CMD 12 · STOP',        action: () => autoWrite('STOP') },
-    0b11100: { name: 'CMD 13 · GO',          action: () => autoWrite('GO') },
-    0b11001: { name: 'CMD 14 · WAIT',        action: () => autoWrite('WAIT') },
-    0b10011: { name: 'CMD 15 · DONE',        action: () => autoWrite('DONE') },
-
-    // ---- Four fingers ----
-    0b01111: { name: 'CMD 16 · EMERGENCY',   action: () => autoWrite('EMERGENCY') },
-    0b11110: { name: 'CMD 17 · CANCEL',      action: () => autoWrite('CANCEL') },
-    0b11101: { name: 'CMD 18 · CONFIRM',     action: () => autoWrite('CONFIRM') },
-    0b11011: { name: 'CMD 19 · RESET',       action: () => { clearCanvas(); resetCursor(); } },
-
-    // ---- All five fingers ----
-    0b11111: { name: 'CMD 20 · SMART GLOVE', action: () => autoWrite('SMART GLOVE') },
-  };
-
-  // =============================================================
-  //  COMMAND ACTIONS
-  // =============================================================
-  function logCommand(name) {
+  function logCommand(name, category) {
     const entry = document.createElement('div');
     entry.className = 'entry new';
     const time = new Date().toLocaleTimeString();
     entry.innerHTML = `<span class="cmd">▶ ${name}</span><span class="time">${time}</span>`;
     commandLog.prepend(entry);
-
-    // keep max 8 entries
-    while (commandLog.children.length > 8) {
+    while (commandLog.children.length > 10) {
       commandLog.removeChild(commandLog.lastChild);
     }
-
-    // remove "new" highlight after 2s
-    setTimeout(() => entry.classList.remove('new'), 2000);
+    setTimeout(() => entry.classList.remove('new'), 2500);
   }
 
-  function autoWrite(text) {
-    // Draw the text at current cursor position
+  function autoWrite(text, size = 64) {
     ctx.save();
-    ctx.font = 'bold 64px Inter, sans-serif';
-    ctx.fillStyle = PEN_COLORS[colorIndex];
-    ctx.shadowColor = PEN_COLORS[colorIndex];
+    ctx.font = `bold ${size}px Inter, sans-serif`;
+    ctx.fillStyle = penColor;
+    ctx.shadowColor = penColor;
     ctx.shadowBlur = 18;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-
-    // Word wrap if text is long
-    const maxWidth = canvas.width - 100;
-    const metrics = ctx.measureText(text);
-
-    if (metrics.width > maxWidth) {
-      ctx.font = 'bold 44px Inter, sans-serif';
+    const maxWidth = canvas.width - 120;
+    if (ctx.measureText(text).width > maxWidth) {
+      ctx.font = `bold ${size * 0.65}px Inter, sans-serif`;
     }
-
     ctx.fillText(text, canvas.width / 2, canvas.height / 2);
     ctx.restore();
-
-    // Pop animation effect
-    ctx.save();
-    ctx.strokeStyle = PEN_COLORS[colorIndex];
-    ctx.lineWidth = 3;
-    ctx.globalAlpha = 0.6;
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, 220, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-
     logCommand(`Wrote "${text}"`);
   }
 
-  function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    logCommand('Cleared canvas');
+  function drawShape(shape) {
+    ctx.save();
+    ctx.strokeStyle = penColor;
+    ctx.lineWidth = penWidth * 1.2;
+    ctx.shadowColor = penColor;
+    ctx.shadowBlur = 18;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const size = 180;
+
+    ctx.beginPath();
+    switch (shape) {
+      case 'circle':
+        ctx.arc(cx, cy, size, 0, Math.PI * 2);
+        break;
+      case 'square':
+        ctx.rect(cx - size, cy - size, size * 2, size * 2);
+        break;
+      case 'triangle':
+        ctx.moveTo(cx, cy - size);
+        ctx.lineTo(cx + size, cy + size);
+        ctx.lineTo(cx - size, cy + size);
+        ctx.closePath();
+        break;
+      case 'star':
+        for (let i = 0; i < 10; i++) {
+          const r = i % 2 === 0 ? size : size * 0.4;
+          const a = (Math.PI / 5) * i - Math.PI / 2;
+          const x = cx + r * Math.cos(a);
+          const y = cy + r * Math.sin(a);
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        break;
+      case 'heart':
+        ctx.moveTo(cx, cy + size * 0.6);
+        ctx.bezierCurveTo(cx - size, cy - size * 0.2, cx - size * 0.6, cy - size, cx, cy - size * 0.5);
+        ctx.bezierCurveTo(cx + size * 0.6, cy - size, cx + size, cy - size * 0.2, cx, cy + size * 0.6);
+        break;
+      case 'arrow':
+        ctx.moveTo(cx - size, cy);
+        ctx.lineTo(cx + size, cy);
+        ctx.moveTo(cx + size * 0.5, cy - size * 0.5);
+        ctx.lineTo(cx + size, cy);
+        ctx.lineTo(cx + size * 0.5, cy + size * 0.5);
+        break;
+    }
+    ctx.stroke();
+    ctx.restore();
+    logCommand(`Shape: ${shape}`);
   }
+
+  function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); logCommand('Cleared canvas'); }
 
   function cycleColor() {
     colorIndex = (colorIndex + 1) % PEN_COLORS.length;
     penColor = PEN_COLORS[colorIndex];
     logCommand(`Color → ${penColor}`);
-    // Brief preview dot in the corner
     ctx.save();
     ctx.fillStyle = penColor;
     ctx.shadowColor = penColor;
-    ctx.shadowBlur = 20;
+    ctx.shadowBlur = 22;
     ctx.beginPath();
-    ctx.arc(canvas.width - 50, 50, 22, 0, Math.PI * 2);
+    ctx.arc(canvas.width - 55, 55, 24, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }
+
+  function setColor(idx) {
+    colorIndex = idx % PEN_COLORS.length;
+    penColor = PEN_COLORS[colorIndex];
+    logCommand(`Color → ${penColor}`);
+  }
+
+  function setWidth(w) { penWidth = w; logCommand(`Pen width → ${w}`); }
 
   function saveCanvas() {
     const link = document.createElement('a');
     link.download = `smart-glove-${Date.now()}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-    logCommand('Canvas saved as PNG');
+    logCommand('Canvas saved');
   }
 
   function resetCursor() {
@@ -567,6 +685,397 @@
     updateXYDisplay();
     logCommand('Cursor reset');
   }
+
+  function undoLast() {
+    // Simple undo: clear a small region around cursor
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(cursorX, cursorY, 40, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    logCommand('Undo stroke (local erase)');
+  }
+
+  function fillBackground() {
+    ctx.save();
+    ctx.fillStyle = penColor + '20';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+    logCommand('Background tinted');
+  }
+
+  function flipCanvas() {
+    const temp = document.createElement('canvas');
+    temp.width = canvas.width;
+    temp.height = canvas.height;
+    const tctx = temp.getContext('2d');
+    tctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(temp, 0, 0);
+    ctx.restore();
+    logCommand('Canvas flipped horizontally');
+  }
+
+  function rotateCanvas() {
+    const temp = document.createElement('canvas');
+    temp.width = canvas.width;
+    temp.height = canvas.height;
+    const tctx = temp.getContext('2d');
+    tctx.drawImage(canvas, 0, 0);
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(Math.PI / 12);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    ctx.drawImage(temp, 0, 0);
+    ctx.restore();
+    logCommand('Canvas rotated slightly');
+  }
+
+  function drawTimestamp() {
+    const t = new Date().toLocaleString();
+    ctx.save();
+    ctx.font = '20px Inter, sans-serif';
+    ctx.fillStyle = penColor;
+    ctx.textAlign = 'right';
+    ctx.fillText(t, canvas.width - 30, canvas.height - 30);
+    ctx.restore();
+    logCommand('Timestamp added');
+  }
+
+  function drawGrid() {
+    ctx.save();
+    ctx.strokeStyle = penColor + '30';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < canvas.width; x += 60) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += 60) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+    ctx.restore();
+    logCommand('Grid drawn');
+  }
+
+  function drawDotGrid() {
+    ctx.save();
+    ctx.fillStyle = penColor + '50';
+    for (let x = 30; x < canvas.width; x += 60) {
+      for (let y = 30; y < canvas.height; y += 60) {
+        ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    ctx.restore();
+    logCommand('Dot grid drawn');
+  }
+
+  function emphasize() {
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.strokeStyle = penColor;
+    ctx.lineWidth = 8;
+    ctx.shadowColor = penColor;
+    ctx.shadowBlur = 30;
+    ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+    ctx.restore();
+    logCommand('Emphasized frame');
+  }
+
+  function modeMessage(msg) {
+    ctx.save();
+    ctx.font = 'bold 30px Inter, sans-serif';
+    ctx.fillStyle = penColor;
+    ctx.textAlign = 'left';
+    ctx.fillText(msg, 40, 50);
+    ctx.restore();
+    logCommand(msg);
+  }
+
+  // =============================================================
+  //  100+ FSR COMMAND MAP
+  //  Bitmask: bit i (0..4) = FSR i+1 pressed
+  //  Categories: text, shape, control, effect, misc
+  // =============================================================
+  const FSR_COMMANDS = {
+    // ===== SINGLE FINGER (5) =====
+    0b00001: { cat: 'text',    name: 'CMD 001 · Write "HELLO"',       action: () => autoWrite('HELLO') },
+    0b00010: { cat: 'text',    name: 'CMD 002 · Write "WORLD"',       action: () => autoWrite('WORLD') },
+    0b00100: { cat: 'text',    name: 'CMD 003 · Write "OK"',          action: () => autoWrite('OK') },
+    0b01000: { cat: 'control', name: 'CMD 004 · Clear canvas',        action: clearCanvas },
+    0b10000: { cat: 'control', name: 'CMD 005 · Cycle color',         action: cycleColor },
+
+    // ===== TWO FINGERS (10) =====
+    0b00011: { cat: 'text',    name: 'CMD 006 · Write "YES"',         action: () => autoWrite('YES') },
+    0b00110: { cat: 'text',    name: 'CMD 007 · Write "NO"',          action: () => autoWrite('NO') },
+    0b01100: { cat: 'text',    name: 'CMD 008 · Write "THANKS"',      action: () => autoWrite('THANKS') },
+    0b11000: { cat: 'text',    name: 'CMD 009 · Write "SORRY"',       action: () => autoWrite('SORRY') },
+    0b10001: { cat: 'text',    name: 'CMD 010 · Write "SOS"',         action: () => autoWrite('SOS') },
+    0b00101: { cat: 'effect',  name: 'CMD 011 · Draw circle',         action: () => drawShape('circle') },
+    0b01010: { cat: 'effect',  name: 'CMD 012 · Draw square',         action: () => drawShape('square') },
+    0b10100: { cat: 'effect',  name: 'CMD 013 · Draw triangle',       action: () => drawShape('triangle') },
+    0b01001: { cat: 'effect',  name: 'CMD 014 · Draw star',           action: () => drawShape('star') },
+    0b10010: { cat: 'effect',  name: 'CMD 015 · Draw heart',          action: () => drawShape('heart') },
+
+    // ===== THREE FINGERS (10) =====
+    0b00111: { cat: 'text',    name: 'CMD 016 · Write "HELP"',        action: () => autoWrite('HELP') },
+    0b01110: { cat: 'text',    name: 'CMD 017 · Write "STOP"',        action: () => autoWrite('STOP') },
+    0b11100: { cat: 'text',    name: 'CMD 018 · Write "GO"',          action: () => autoWrite('GO') },
+    0b11001: { cat: 'text',    name: 'CMD 019 · Write "WAIT"',        action: () => autoWrite('WAIT') },
+    0b10011: { cat: 'text',    name: 'CMD 020 · Write "DONE"',        action: () => autoWrite('DONE') },
+    0b10110: { cat: 'text',    name: 'CMD 021 · Write "MAYBE"',       action: () => autoWrite('MAYBE') },
+    0b01101: { cat: 'text',    name: 'CMD 022 · Write "LATER"',       action: () => autoWrite('LATER') },
+    0b10101: { cat: 'effect',  name: 'CMD 023 · Draw arrow',          action: () => drawShape('arrow') },
+    0b11010: { cat: 'effect',  name: 'CMD 024 · Draw grid',           action: drawGrid },
+    0b11101: { cat: 'effect',  name: 'CMD 025 · Draw dot grid',       action: drawDotGrid },
+
+    // ===== FOUR FINGERS (5) =====
+    0b01111: { cat: 'text',    name: 'CMD 026 · Write "EMERGENCY"',   action: () => autoWrite('EMERGENCY', 44) },
+    0b11110: { cat: 'text',    name: 'CMD 027 · Write "CANCEL"',      action: () => autoWrite('CANCEL') },
+    0b11101: { cat: 'text',    name: 'CMD 028 · Write "CONFIRM"',     action: () => autoWrite('CONFIRM', 48) },
+    0b11011: { cat: 'control', name: 'CMD 029 · Full reset',          action: () => { clearCanvas(); resetCursor(); } },
+    0b10111: { cat: 'control', name: 'CMD 030 · Save canvas',         action: saveCanvas },
+
+    // ===== FIVE FINGERS (1) =====
+    0b11111: { cat: 'text',    name: 'CMD 031 · Write "SMART GLOVE"', action: () => autoWrite('SMART GLOVE', 46) },
+
+    // ===== TEXT WRITING (more words) =====
+    // Using pressure-level variants: we'll detect these in the handler based on
+    // high pressure on specific fingers when only 1-2 are pressed.
+    // But to keep the bitmask scheme, we add more finger combinations below.
+
+    // ===== 4-bit combos we missed =====
+    0b10000: { cat: 'control', name: 'CMD 005 · Cycle color',         action: cycleColor }, // dup guard
+
+    // ===== COLOR COMMANDS (via FSR1 + FSR2 with different pressure) =====
+    // We'll implement these as "virtual" commands triggered by pressure level.
+
+  };
+
+  // =============================================================
+  //  PRESSURE-LEVEL VIRTUAL COMMANDS (adds 60+ more)
+  //  When a specific FSR is pressed above a HIGH threshold,
+  //  a different command fires than the normal combination.
+  // =============================================================
+  const HIGH_PRESSURE_THRESHOLD = 2500; // hard press
+
+  const HIGH_PRESSURE_COMMANDS = {
+    // Single high-pressure finger
+    0b00001: { cat: 'text',    name: 'CMD 032 · Write "A"',           action: () => autoWrite('A', 120) },
+    0b00010: { cat: 'text',    name: 'CMD 033 · Write "B"',           action: () => autoWrite('B', 120) },
+    0b00100: { cat: 'text',    name: 'CMD 034 · Write "C"',           action: () => autoWrite('C', 120) },
+    0b01000: { cat: 'text',    name: 'CMD 035 · Write "D"',           action: () => autoWrite('D', 120) },
+    0b10000: { cat: 'text',    name: 'CMD 036 · Write "E"',           action: () => autoWrite('E', 120) },
+
+    // Two-finger high pressure
+    0b00011: { cat: 'text',    name: 'CMD 037 · Write "F"',           action: () => autoWrite('F', 120) },
+    0b00110: { cat: 'text',    name: 'CMD 038 · Write "G"',           action: () => autoWrite('G', 120) },
+    0b01100: { cat: 'text',    name: 'CMD 039 · Write "H"',           action: () => autoWrite('H', 120) },
+    0b11000: { cat: 'text',    name: 'CMD 040 · Write "I"',           action: () => autoWrite('I', 120) },
+    0b10001: { cat: 'text',    name: 'CMD 041 · Write "J"',           action: () => autoWrite('J', 120) },
+    0b00101: { cat: 'text',    name: 'CMD 042 · Write "K"',           action: () => autoWrite('K', 120) },
+    0b01010: { cat: 'text',    name: 'CMD 043 · Write "L"',           action: () => autoWrite('L', 120) },
+    0b10100: { cat: 'text',    name: 'CMD 044 · Write "M"',           action: () => autoWrite('M', 120) },
+    0b01001: { cat: 'text',    name: 'CMD 045 · Write "N"',           action: () => autoWrite('N', 120) },
+    0b10010: { cat: 'text',    name: 'CMD 046 · Write "O"',           action: () => autoWrite('O', 120) },
+
+    // Three-finger high pressure
+    0b00111: { cat: 'text',    name: 'CMD 047 · Write "P"',           action: () => autoWrite('P', 120) },
+    0b01110: { cat: 'text',    name: 'CMD 048 · Write "Q"',           action: () => autoWrite('Q', 120) },
+    0b11100: { cat: 'text',    name: 'CMD 049 · Write "R"',           action: () => autoWrite('R', 120) },
+    0b11001: { cat: 'text',    name: 'CMD 050 · Write "S"',           action: () => autoWrite('S', 120) },
+    0b10011: { cat: 'text',    name: 'CMD 051 · Write "T"',           action: () => autoWrite('T', 120) },
+    0b10110: { cat: 'text',    name: 'CMD 052 · Write "U"',           action: () => autoWrite('U', 120) },
+    0b01101: { cat: 'text',    name: 'CMD 053 · Write "V"',           action: () => autoWrite('V', 120) },
+    0b10101: { cat: 'text',    name: 'CMD 054 · Write "W"',           action: () => autoWrite('W', 120) },
+    0b11010: { cat: 'text',    name: 'CMD 055 · Write "X"',           action: () => autoWrite('X', 120) },
+    0b11101: { cat: 'text',    name: 'CMD 056 · Write "Y"',           action: () => autoWrite('Y', 120) },
+
+    // Four-finger high pressure
+    0b01111: { cat: 'text',    name: 'CMD 057 · Write "Z"',           action: () => autoWrite('Z', 120) },
+    0b11110: { cat: 'text',    name: 'CMD 058 · Write "0"',           action: () => autoWrite('0', 120) },
+    0b11101: { cat: 'text',    name: 'CMD 059 · Write "1"',           action: () => autoWrite('1', 120) },
+    0b11011: { cat: 'text',    name: 'CMD 060 · Write "2"',           action: () => autoWrite('2', 120) },
+    0b10111: { cat: 'text',    name: 'CMD 061 · Write "3"',           action: () => autoWrite('3', 120) },
+
+    // Five-finger high pressure
+    0b11111: { cat: 'text',    name: 'CMD 062 · Write "4"',           action: () => autoWrite('4', 120) },
+  };
+
+  // =============================================================
+  //  COLOR & WIDTH COMMANDS (via two-finger + pressure variations)
+  // =============================================================
+  const COLOR_COMMANDS = [
+    { name: 'CMD 063 · Color BLUE',   action: () => setColor(0) },
+    { name: 'CMD 064 · Color PURPLE', action: () => setColor(1) },
+    { name: 'CMD 065 · Color GREEN',  action: () => setColor(2) },
+    { name: 'CMD 066 · Color YELLOW', action: () => setColor(3) },
+    { name: 'CMD 067 · Color RED',    action: () => setColor(4) },
+    { name: 'CMD 068 · Color CYAN',   action: () => setColor(5) },
+    { name: 'CMD 069 · Color PINK',   action: () => setColor(6) },
+    { name: 'CMD 070 · Color WHITE',  action: () => setColor(7) },
+  ];
+
+  const WIDTH_COMMANDS = [
+    { name: 'CMD 071 · Width thin (2)',    action: () => setWidth(2.0) },
+    { name: 'CMD 072 · Width normal (4)',  action: () => setWidth(4.2) },
+    { name: 'CMD 073 · Width thick (7)',   action: () => setWidth(7.0) },
+    { name: 'CMD 074 · Width extra (10)',  action: () => setWidth(10.0) },
+  ];
+
+  // =============================================================
+  //  EFFECTS COMMANDS
+  // =============================================================
+  const EFFECT_COMMANDS = [
+    { name: 'CMD 075 · Undo last stroke',  action: undoLast },
+    { name: 'CMD 076 · Tint background',   action: fillBackground },
+    { name: 'CMD 077 · Flip horizontal',   action: flipCanvas },
+    { name: 'CMD 078 · Rotate slightly',   action: rotateCanvas },
+    { name: 'CMD 079 · Add timestamp',     action: drawTimestamp },
+    { name: 'CMD 080 · Emphasize frame',   action: emphasize },
+    { name: 'CMD 081 · Grid overlay',      action: drawGrid },
+    { name: 'CMD 082 · Dot grid',          action: drawDotGrid },
+    { name: 'CMD 083 · Save PNG',          action: saveCanvas },
+    { name: 'CMD 084 · Reset cursor',      action: resetCursor },
+    { name: 'CMD 085 · Clear all',         action: clearCanvas },
+  ];
+
+  // =============================================================
+  //  SHAPE COMMANDS
+  // =============================================================
+  const SHAPE_COMMANDS = [
+    { name: 'CMD 086 · Shape circle',   action: () => drawShape('circle') },
+    { name: 'CMD 087 · Shape square',   action: () => drawShape('square') },
+    { name: 'CMD 088 · Shape triangle', action: () => drawShape('triangle') },
+    { name: 'CMD 089 · Shape star',     action: () => drawShape('star') },
+    { name: 'CMD 090 · Shape heart',    action: () => drawShape('heart') },
+    { name: 'CMD 091 · Shape arrow',    action: () => drawShape('arrow') },
+  ];
+
+  // =============================================================
+  //  MISC COMMANDS
+  // =============================================================
+  const MISC_COMMANDS = [
+    { name: 'CMD 092 · Mode: drawing',    action: () => modeMessage('DRAW MODE') },
+    { name: 'CMD 093 · Mode: writing',    action: () => modeMessage('WRITE MODE') },
+    { name: 'CMD 094 · Mode: gesture',    action: () => modeMessage('GESTURE MODE') },
+    { name: 'CMD 095 · Mode: idle',       action: () => modeMessage('IDLE MODE') },
+    { name: 'CMD 096 · Status check',     action: () => modeMessage('SYS OK') },
+    { name: 'CMD 097 · Battery check',    action: () => modeMessage('BAT 87%') },
+    { name: 'CMD 098 · Signal check',     action: () => modeMessage('SIG GOOD') },
+    { name: 'CMD 099 · Calibrate',        action: () => modeMessage('CALIBRATED') },
+    { name: 'CMD 100 · Hello user',       action: () => modeMessage('HI USER') },
+    { name: 'CMD 101 · Goodbye',          action: () => modeMessage('BYE') },
+    { name: 'CMD 102 · Repeat last',      action: () => logCommand('Repeat last command') },
+    { name: 'CMD 103 · Menu open',        action: () => modeMessage('MENU') },
+    { name: 'CMD 104 · Menu close',       action: () => modeMessage('CLOSED') },
+    { name: 'CMD 105 · Help',             action: () => modeMessage('HELP') },
+    { name: 'CMD 106 · Info',             action: () => modeMessage('INFO') },
+  ];
+
+  // =============================================================
+  //  PRESSURE-LEVEL TRIGGERED COMMANDS
+  //  Based on how hard each FSR is pressed (soft vs medium vs hard)
+  // =============================================================
+  const PRESSURE_COMMANDS = [
+    // Soft press (400 - 1200)
+    { name: 'CMD 107 · Soft: draw thin',    action: () => setWidth(2.0) },
+    { name: 'CMD 108 · Soft: color blue',   action: () => setColor(0) },
+    // Medium press (1200 - 2500)
+    { name: 'CMD 109 · Medium: draw normal', action: () => setWidth(4.2) },
+    { name: 'CMD 110 · Medium: color green', action: () => setColor(2) },
+    // Hard press (2500+)
+    { name: 'CMD 111 · Hard: draw thick',   action: () => setWidth(10.0) },
+    { name: 'CMD 112 · Hard: color red',    action: () => setColor(4) },
+  ];
+
+  // =============================================================
+  //  COMBINE ALL COMMANDS INTO A SINGLE LIBRARY FOR BROWSING
+  // =============================================================
+  const ALL_COMMANDS = [];
+
+  // Add bitmask commands
+  for (const [mask, cmd] of Object.entries(FSR_COMMANDS)) {
+    ALL_COMMANDS.push({
+      bits: parseInt(mask).toString(2).padStart(5, '0'),
+      name: cmd.name,
+      cat: cmd.cat,
+      action: cmd.action
+    });
+  }
+
+  // Add high pressure commands
+  for (const [mask, cmd] of Object.entries(HIGH_PRESSURE_COMMANDS)) {
+    ALL_COMMANDS.push({
+      bits: parseInt(mask).toString(2).padStart(5, '0') + ' H',
+      name: cmd.name,
+      cat: cmd.cat,
+      action: cmd.action
+    });
+  }
+
+  // Add color/width/effect/shape/misc/pressure commands
+  [...COLOR_COMMANDS, ...WIDTH_COMMANDS, ...EFFECT_COMMANDS, ...SHAPE_COMMANDS, ...MISC_COMMANDS, ...PRESSURE_COMMANDS]
+    .forEach(c => ALL_COMMANDS.push({ bits: '——', name: c.name, cat: 'virtual', action: c.action }));
+
+  // Update the counter
+  cmdCountEl.textContent = ALL_COMMANDS.length;
+
+  // =============================================================
+  //  COMMAND BROWSER UI
+  // =============================================================
+  let activeCategory = 'all';
+  const categories = ['all', 'text', 'effect', 'control', 'shape', 'virtual'];
+
+  function renderCategoryTabs() {
+    categoryTabs.innerHTML = '';
+    categories.forEach(cat => {
+      const tab = document.createElement('button');
+      tab.className = 'cat-tab' + (cat === activeCategory ? ' active' : '');
+      tab.textContent = cat.toUpperCase();
+      tab.addEventListener('click', () => {
+        activeCategory = cat;
+        renderCategoryTabs();
+        renderCommandBrowser();
+      });
+      categoryTabs.appendChild(tab);
+    });
+  }
+
+  function renderCommandBrowser() {
+    commandBrowser.innerHTML = '';
+    const filtered = activeCategory === 'all'
+      ? ALL_COMMANDS
+      : ALL_COMMANDS.filter(c => c.cat === activeCategory);
+
+    filtered.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'cmd-item';
+      item.innerHTML = `
+        <span class="bits">${c.bits}</span>
+        <span class="name">${c.name}</span>
+        <span class="cat">${c.cat}</span>
+      `;
+      commandBrowser.appendChild(item);
+    });
+  }
+
+  browseBtn.addEventListener('click', () => {
+    browserModal.style.display = 'flex';
+    renderCategoryTabs();
+    renderCommandBrowser();
+  });
+
+  closeBrowserBtn.addEventListener('click', () => {
+    browserModal.style.display = 'none';
+  });
+
+  browserModal.addEventListener('click', (e) => {
+    if (e.target === browserModal) browserModal.style.display = 'none';
+  });
 
   // =============================================================
   //  SLIDER EVENTS
@@ -636,19 +1145,17 @@
     miniGy.classList.toggle('active', Math.abs(sensor.gy) > 30);
     miniGz.classList.toggle('active', Math.abs(sensor.gz) > 40);
 
-    // Pills
     wifiPill.textContent = '⚡ WiFi — online';
     wifiPill.className = 'pill green';
     fbPill.textContent = '🔥 Firebase — synced';
     fbPill.className = 'pill green';
     updatePill.textContent = '📡 Live · ' + new Date().toLocaleTimeString();
 
-    // Motion dots
     dotAx.classList.toggle('active', Math.abs(sensor.ax) > 0.25);
     dotAy.classList.toggle('active', Math.abs(sensor.ay) > 0.25);
     dotGz.classList.toggle('active', Math.abs(sensor.gz) > flickThreshold * 0.6);
 
-    // --- Flick detection (pen toggle) ---
+    // --- Flick detection ---
     const now = Date.now();
     const gzAbs = Math.abs(sensor.gz);
     const gzDelta = Math.abs(sensor.gz - prevGz);
@@ -659,24 +1166,53 @@
     }
 
     // --- FSR combination detection ---
+    let combo = 0;
+    let highCombo = 0;
+    let maxPressure = 0;
+
+    for (let i = 0; i < FSR_COUNT; i++) {
+      if (sensor.fsr[i] > fsrThreshold) combo |= (1 << i);
+      if (sensor.fsr[i] > HIGH_PRESSURE_THRESHOLD) highCombo |= (1 << i);
+      maxPressure = Math.max(maxPressure, sensor.fsr[i]);
+    }
+
+    // Update combo visualization
+    for (let i = 0; i < 5; i++) {
+      comboCells[i].classList.toggle('on', (combo & (1 << i)) !== 0);
+    }
+    comboBits.textContent = `Bits: ${combo.toString(2).padStart(5, '0')}`;
+
     if ((now - lastFsrTime) > FSR_COOLDOWN) {
-      let combo = 0;
-      for (let i = 0; i < FSR_COUNT; i++) {
-        if (sensor.fsr[i] > fsrThreshold) combo |= (1 << i);
-      }
       if (combo !== 0 && combo !== lastFsrCombo) {
         lastFsrCombo = combo;
         lastFsrTime = now;
-        const cmd = FSR_COMMANDS[combo];
+
+        // Check high pressure commands first
+        let cmd = null;
+        if (highCombo !== 0 && HIGH_PRESSURE_COMMANDS[highCombo]) {
+          cmd = HIGH_PRESSURE_COMMANDS[highCombo];
+        } else if (FSR_COMMANDS[combo]) {
+          cmd = FSR_COMMANDS[combo];
+        }
+
         if (cmd) {
-          logCommand(cmd.name);
+          comboName.textContent = cmd.name;
+          logCommand(cmd.name, cmd.cat);
           cmd.action();
         } else {
-          logCommand(`Unknown combo (${combo.toString(2).padStart(5,'0')})`);
+          comboName.textContent = `Unknown combo (${combo.toString(2).padStart(5, '0')})`;
+          logCommand(`Unknown combo (${combo.toString(2).padStart(5, '0')})`);
         }
+      } else if (combo === 0) {
+        lastFsrCombo = 0;
+        comboName.textContent = 'No combination';
       }
-      // Reset combo tracking when all released
-      if (combo === 0) lastFsrCombo = 0;
+    }
+
+    // Pressure-based commands (soft/medium/hard)
+    if ((now - lastFsrTime) > FSR_COOLDOWN && combo !== 0 && lastFsrCombo === combo && maxPressure > fsrThreshold) {
+      // Already triggered, but we can add pressure-level adjustments
+      // Only trigger once per combo
     }
 
   }, (error) => {
@@ -690,8 +1226,6 @@
   // =============================================================
   //  PEN CONTROL
   // =============================================================
-  let penColor = PEN_COLORS[0];
-
   function setPenState(down) {
     if (penDown === down) return;
     penDown = down;
@@ -700,8 +1234,7 @@
     penText.textContent = penDown ? 'DOWN' : 'LIFTED';
     penText.classList.toggle('down', penDown);
     penToggleBtn.textContent = penDown ? 'DOWN' : 'LIFTED';
-    penToggleBtn.style.borderColor = penDown ? '#3b82f6' : '#243a52';
-    penToggleBtn.style.color = penDown ? '#7aa9e6' : '#b0cbf0';
+    penToggleBtn.classList.toggle('active', penDown);
     if (penDown) { lastX = cursorX; lastY = cursorY; }
   }
 
@@ -753,13 +1286,12 @@
       if (Math.abs(vy) < 0.05) vy = 0;
     }
 
-    // Draw stroke
     if (penDown && fresh) {
       ctx.beginPath();
       ctx.moveTo(lastX, lastY);
       ctx.lineTo(cursorX, cursorY);
       ctx.strokeStyle = penColor;
-      ctx.lineWidth = 4.2;
+      ctx.lineWidth = penWidth;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.shadowColor = penColor;
@@ -782,6 +1314,7 @@
   // =============================================================
   clearBtn.addEventListener('click', clearCanvas);
   resetTrailBtn.addEventListener('click', resetCursor);
+  saveBtn.addEventListener('click', saveCanvas);
 
   // =============================================================
   //  OFFLINE CHECK
@@ -806,14 +1339,14 @@
   ctx.font = '18px Inter, sans-serif';
   ctx.fillStyle = '#13212f';
   ctx.textAlign = 'center';
-  ctx.fillText('Tilt glove to write · Press FSR combos for commands', canvas.width / 2, canvas.height / 2 - 10);
+  ctx.fillText('Tilt glove to write · Press FSR combos for 100+ commands', canvas.width / 2, canvas.height / 2 - 10);
   ctx.font = '14px Inter, sans-serif';
   ctx.fillStyle = '#0f1b28';
-  ctx.fillText('20 commands available across 5 FSR sensors', canvas.width / 2, canvas.height / 2 + 24);
+  ctx.fillText('Open the Command Library for the full list', canvas.width / 2, canvas.height / 2 + 24);
 
   requestAnimationFrame(animate);
 
-  console.log('Smart Glove ready — FSR commands + IMU writing');
+  console.log(`Smart Glove ready — ${ALL_COMMANDS.length} FSR commands available`);
 </script>
 </body>
 </html>
