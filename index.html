@@ -3,248 +3,290 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Glove · Air Handwriting</title>
-  <!-- Firebase + Chart.js + Google Fonts -->
+  <title>Smart Glove · Motion Air Writing</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #0b0f17;
+      background: #070b10;
       font-family: 'Inter', system-ui, sans-serif;
       color: #eef2f6;
-      padding: 1.5rem;
+      padding: 1.2rem;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    .dashboard {
-      max-width: 1480px;
+    .app {
+      max-width: 1500px;
       width: 100%;
       display: grid;
-      grid-template-columns: 1.1fr 1.9fr;
-      gap: 1.5rem;
-      background: rgba(18, 25, 35, 0.75);
-      backdrop-filter: blur(12px);
-      border-radius: 3rem;
-      padding: 2rem;
-      border: 1px solid rgba(70, 130, 200, 0.2);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      grid-template-columns: 320px 1fr;
+      gap: 1.2rem;
+      background: rgba(14, 20, 28, 0.9);
+      backdrop-filter: blur(16px);
+      border-radius: 2.5rem;
+      padding: 1.8rem;
+      border: 1px solid #1d2a3a;
+      box-shadow: 0 30px 60px -15px #000;
     }
 
-    /* left column */
-    .left-panel {
+    /* ===== SIDEBAR ===== */
+    .sidebar {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .glove-header {
-      display: flex;
-      align-items: center;
       gap: 1rem;
     }
 
-    .glove-icon {
-      font-size: 2.7rem;
-      filter: drop-shadow(0 0 12px #3b82f6);
-    }
-
-    .glove-header h1 {
-      font-size: 1.9rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #b8d6ff, #7aa9e6);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      line-height: 1.2;
-    }
-
-    .glove-header .sub {
-      font-size: 0.85rem;
-      color: #8a9bb5;
-      font-weight: 400;
-      margin-top: 0.2rem;
-    }
-
-    .card {
-      background: #131b26;
-      border-radius: 2rem;
-      padding: 1.4rem 1.6rem;
-      border: 1px solid #27384d;
-      box-shadow: inset 0 1px 2px rgba(255,255,255,0.02), 0 8px 20px -10px #000000;
-    }
-
-    .card-title {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-weight: 600;
-      color: #7e95b0;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .fsr-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 0.9rem;
-    }
-
-    .fsr-item {
+    .brand {
       display: flex;
       align-items: center;
       gap: 0.8rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid #1d2a3a;
     }
+    .brand-icon { font-size: 2.2rem; filter: drop-shadow(0 0 10px #3b82f6); }
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #c8dfff, #7aa9e6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .brand .sub { font-size: 0.7rem; color: #6a809b; font-weight: 500; margin-top: 0.15rem; letter-spacing: 0.02em; }
+
+    .card {
+      background: #111a24;
+      border-radius: 1.5rem;
+      padding: 1.1rem 1.2rem;
+      border: 1px solid #1e2d3f;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    .card-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      color: #7188a3;
+      margin-bottom: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* FSR horizontal bars */
+    .fsr-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.7rem;
+    }
+    .fsr-row:last-child { margin-bottom: 0; }
 
     .fsr-label {
-      width: 52px;
-      font-size: 0.9rem;
-      font-weight: 500;
+      width: 46px;
+      font-size: 0.78rem;
+      font-weight: 600;
       color: #b0c6e0;
     }
-
-    .fsr-bar-bg {
+    .fsr-track {
       flex: 1;
-      height: 10px;
-      background: #1c2a3a;
-      border-radius: 20px;
+      height: 8px;
+      background: #1a2635;
+      border-radius: 10px;
       overflow: hidden;
     }
-
-    .fsr-bar-fill {
+    .fsr-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #3b82f6, #60a5fa, #a78bfa);
-      border-radius: 20px;
-      transition: width 0.12s ease;
+      background: linear-gradient(90deg, #2563eb, #60a5fa, #a78bfa);
+      border-radius: 10px;
+      transition: width 0.1s linear;
     }
-
-    .fsr-value {
-      width: 48px;
+    .fsr-num {
+      width: 42px;
       text-align: right;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: #cbdffa;
       font-variant-numeric: tabular-nums;
     }
 
-    .mpu-grid {
+    /* MPU compact grid */
+    .mpu-mini-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.8rem 1.2rem;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.4rem;
     }
+    .mpu-mini {
+      background: #0d151f;
+      border-radius: 0.8rem;
+      padding: 0.5rem 0.3rem;
+      text-align: center;
+      border: 1px solid #1a2839;
+    }
+    .mpu-mini .k { font-size: 0.6rem; font-weight: 600; color: #647b9b; letter-spacing: 0.04em; }
+    .mpu-mini .v { font-size: 0.85rem; font-weight: 700; color: #c9defa; font-variant-numeric: tabular-nums; margin-top: 0.1rem; }
 
-    .mpu-item {
+    /* Status */
+    .status-flex {
       display: flex;
       justify-content: space-between;
-      font-size: 0.9rem;
-      padding: 0.2rem 0;
-      border-bottom: 1px dashed #1f2e40;
+      gap: 0.5rem;
+      font-size: 0.7rem;
     }
-
-    .mpu-key {
-      color: #8fa3be;
-      font-weight: 400;
-    }
-
-    .mpu-val {
+    .pill {
+      padding: 0.35rem 0.7rem;
+      border-radius: 30px;
       font-weight: 600;
-      color: #d3e6ff;
-      font-variant-numeric: tabular-nums;
+      background: #1a2635;
+      color: #8fa3be;
+      border: 1px solid #2a3b50;
+      flex: 1;
+      text-align: center;
+      transition: all 0.2s;
     }
+    .pill.green { background: #0b2b1f; color: #6ee7b7; border-color: #2b6e4e; }
+    .pill.red { background: #2b1a1a; color: #f87171; border-color: #7f3d3d; }
+    .pill.blue { background: #16273b; color: #90b8f0; border-color: #2e4a6e; }
 
-    .status-row {
+    /* Writing mode toggle */
+    .mode-box {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-top: 0.8rem;
-      font-size: 0.85rem;
+      justify-content: space-between;
+      background: #0d151f;
+      border-radius: 1.2rem;
+      padding: 0.7rem 1rem;
+      border: 1px solid #1e2d3f;
     }
-
-    .badge {
-      padding: 0.3rem 0.9rem;
-      border-radius: 100px;
-      font-weight: 500;
+    .mode-label {
       font-size: 0.75rem;
-      background: #1e2b3c;
-      color: #9bb5d4;
-      border: 1px solid #2e4057;
+      font-weight: 600;
+      color: #8fa3be;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
-
-    .badge.online {
-      background: #0b2b1f;
-      color: #6ee7b7;
-      border-color: #2b6e4e;
+    .toggle {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      background: #1e2d3f;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: none;
+      outline: none;
     }
-
-    .badge.offline {
-      background: #2b1a1a;
-      color: #f87171;
-      border-color: #7f3d3d;
+    .toggle.on { background: #2563eb; }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
     }
+    .toggle.on::after { transform: translateX(22px); }
 
-    /* right column – handwriting canvas */
-    .right-panel {
+    /* Sensitivity */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-top: 0.5rem;
+    }
+    .slider-row label { font-size: 0.7rem; font-weight: 600; color: #7188a3; width: 52px; }
+    input[type=range] {
+      flex: 1;
+      height: 4px;
+      -webkit-appearance: none;
+      background: #1a2635;
+      border-radius: 4px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #3b82f6;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #0e141c;
+    }
+    .slider-val { font-size: 0.75rem; font-weight: 700; color: #90b8f0; width: 24px; text-align: right; }
+
+    /* ===== MAIN CANVAS AREA ===== */
+    .canvas-area {
       display: flex;
       flex-direction: column;
-      background: #101720;
+      background: #0c131c;
       border-radius: 2rem;
-      border: 1px solid #27384d;
+      border: 1px solid #1d2a3a;
       overflow: hidden;
+      position: relative;
     }
 
-    .canvas-header {
+    .canvas-toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.4rem 1.8rem 0.8rem 1.8rem;
+      padding: 0.9rem 1.4rem;
+      background: #0e1722;
+      border-bottom: 1px solid #1a2839;
+      flex-wrap: wrap;
+      gap: 0.6rem;
     }
 
-    .canvas-header h2 {
-      font-size: 1.3rem;
-      font-weight: 500;
+    .canvas-toolbar h2 {
+      font-size: 1rem;
+      font-weight: 600;
       color: #c9defa;
-      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
+    .canvas-toolbar h2 .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #3b82f6; animation: pulse 1.4s infinite;
+    }
+    @keyframes pulse { 0%{opacity:.4} 50%{opacity:1} 100%{opacity:.4} }
 
-    .clear-btn {
-      background: #1b2a3a;
-      border: none;
+    .toolbar-actions { display: flex; gap: 0.5rem; }
+    .btn {
+      background: #182433;
+      border: 1px solid #263a50;
       color: #b0cbf0;
-      font-size: 0.8rem;
-      padding: 0.5rem 1.2rem;
-      border-radius: 100px;
-      font-weight: 500;
+      font-size: 0.72rem;
+      padding: 0.45rem 1rem;
+      border-radius: 40px;
+      font-weight: 600;
       cursor: pointer;
-      border: 1px solid #2f4057;
-      transition: all 0.15s;
       font-family: inherit;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
     }
-
-    .clear-btn:hover {
-      background: #263a50;
-      color: #d7eaff;
-      border-color: #4b6d92;
-    }
+    .btn:hover { background: #1f3044; color: #d7eaff; border-color: #3b5b80; }
+    .btn.danger { color: #f87171; border-color: #4a2a2a; }
+    .btn.danger:hover { background: #2b1a1a; }
 
     .canvas-wrapper {
       flex: 1;
-      padding: 0.2rem 1.8rem 1.8rem 1.8rem;
+      padding: 1rem 1.4rem 1.4rem 1.4rem;
       display: flex;
       flex-direction: column;
     }
@@ -252,183 +294,466 @@
     canvas {
       width: 100%;
       height: auto;
-      aspect-ratio: 1.8 / 1;
-      background: #0d141e;
-      border-radius: 1.6rem;
-      border: 1px solid #253649;
-      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1), 0 12px 30px -12px #000000;
-      cursor: crosshair;
+      aspect-ratio: 16 / 9;
+      background: #0a1018;
+      border-radius: 1.4rem;
+      border: 1px solid #1c2b3d;
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.08), 0 18px 40px -16px #000;
       display: block;
       touch-action: none;
+      transition: box-shadow 0.25s;
+    }
+    canvas.writing {
+      box-shadow: 0 0 0 2px rgba(96,165,250,0.55), 0 0 30px -6px #3b82f6, 0 18px 40px -16px #000;
     }
 
-    .hint {
-      font-size: 0.75rem;
-      color: #647b9b;
-      margin-top: 0.7rem;
+    .hint-bar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-    }
-
-    .hint span {
-      display: flex;
       align-items: center;
+      margin-top: 0.7rem;
+      font-size: 0.68rem;
+      color: #5a7290;
+      padding: 0 0.2rem;
+      flex-wrap: wrap;
       gap: 0.4rem;
     }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background: #3b82f6;
-      border-radius: 50%;
-      display: inline-block;
-      animation: pulse 1.5s infinite;
+    .hint-bar .left { display: flex; align-items: center; gap: 0.6rem; }
+    .hint-bar .badge-xy {
+      background: #111e2c;
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      border: 1px solid #1f3142;
+      font-weight: 500;
+      color: #7a9bc0;
+      font-variant-numeric: tabular-nums;
     }
-
-    @keyframes pulse {
-      0% { opacity: 0.5; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.2); }
-      100% { opacity: 0.5; transform: scale(0.9); }
+    .gesture-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
     }
-
-    .footer-note {
-      font-size: 0.7rem;
-      color: #3e536b;
-      margin-top: 0.5rem;
-      text-align: right;
+    .gesture-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #334c66;
+      transition: background 0.15s;
     }
+    .gesture-dot.active { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
 
-    @media (max-width: 1000px) {
-      .dashboard {
-        grid-template-columns: 1fr;
-        padding: 1.5rem;
-      }
-      body { padding: 0.8rem; }
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; padding: 1rem; }
+      body { padding: 0.5rem; }
     }
   </style>
 </head>
 <body>
 
-<div class="dashboard">
-  <!-- LEFT: telemetry -->
-  <div class="left-panel">
-    <div class="glove-header">
-      <div class="glove-icon">🧤</div>
+<div class="app">
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🧤</div>
       <div>
         <h1>Smart Glove</h1>
-        <div class="sub">Air Handwriting · FSR + MPU6050</div>
+        <div class="sub">Motion Air Writing System</div>
       </div>
     </div>
 
-    <!-- FSR card -->
+    <!-- FSR panel -->
     <div class="card">
-      <div class="card-title">✋ FSR pressure sensors</div>
-      <div class="fsr-grid" id="fsrGrid">
-        <!-- generated by JS -->
+      <div class="card-title"><span>✋ FSR Pressure</span><span id="fsrSum" style="color:#3b82f6;">0</span></div>
+      <div id="fsrContainer">
+        <!-- JS builds rows -->
       </div>
     </div>
 
-    <!-- MPU card -->
+    <!-- MPU panel -->
     <div class="card">
-      <div class="card-title">🌀 MPU6050 motion</div>
-      <div class="mpu-grid">
-        <div class="mpu-item"><span class="mpu-key">AX</span><span class="mpu-val" id="axVal">—</span></div>
-        <div class="mpu-item"><span class="mpu-key">AY</span><span class="mpu-val" id="ayVal">—</span></div>
-        <div class="mpu-item"><span class="mpu-key">AZ</span><span class="mpu-val" id="azVal">—</span></div>
-        <div class="mpu-item"><span class="mpu-key">GX</span><span class="mpu-val" id="gxVal">—</span></div>
-        <div class="mpu-item"><span class="mpu-key">GY</span><span class="mpu-val" id="gyVal">—</span></div>
-        <div class="mpu-item"><span class="mpu-key">GZ</span><span class="mpu-val" id="gzVal">—</span></div>
-        <div class="mpu-item"><span class="mpu-key">Temp</span><span class="mpu-val" id="tempVal">—</span></div>
-        <div class="mpu-item"><span class="mpu-key">MPU</span><span class="mpu-val" id="mpuStatus">—</span></div>
-      </div>
-      <div class="status-row">
-        <span class="badge" id="wifiBadge">⚡ WiFi —</span>
-        <span class="badge" id="firebaseBadge">🔥 Firebase —</span>
+      <div class="card-title">🌀 MPU6050 Motion</div>
+      <div class="mpu-mini-grid">
+        <div class="mpu-mini"><div class="k">AX</div><div class="v" id="mAx">—</div></div>
+        <div class="mpu-mini"><div class="k">AY</div><div class="v" id="mAy">—</div></div>
+        <div class="mpu-mini"><div class="k">AZ</div><div class="v" id="mAz">—</div></div>
+        <div class="mpu-mini"><div class="k">GX</div><div class="v" id="mGx">—</div></div>
+        <div class="mpu-mini"><div class="k">GY</div><div class="v" id="mGy">—</div></div>
+        <div class="mpu-mini"><div class="k">GZ</div><div class="v" id="mGz">—</div></div>
       </div>
     </div>
-  </div>
 
-  <!-- RIGHT: handwriting canvas -->
-  <div class="right-panel">
-    <div class="canvas-header">
-      <h2>✍️ Air handwriting canvas</h2>
-      <button class="clear-btn" id="clearCanvasBtn">Clear</button>
+    <!-- Writing mode toggle -->
+    <div class="card" style="padding:0.8rem 1rem;">
+      <div class="mode-box" style="background:transparent; padding:0; border:none;">
+        <div class="mode-label">🖊️ Air writing</div>
+        <button class="toggle" id="writingToggle" title="Toggle motion writing"></button>
+      </div>
+      <div class="slider-row">
+        <label>Sensitivity</label>
+        <input type="range" id="sensitivitySlider" min="0.3" max="3.0" step="0.1" value="1.4">
+        <span class="slider-val" id="sensitivityVal">1.4</span>
+      </div>
+      <div style="font-size:0.6rem; color:#4a627d; margin-top:0.5rem; text-align:center;">
+        FSR1 triggers stroke • Tilt steers pen
+      </div>
     </div>
+
+    <!-- Status row -->
+    <div class="status-flex">
+      <div class="pill" id="wifiPill">⚡ WiFi —</div>
+      <div class="pill" id="fbPill">🔥 Firebase —</div>
+    </div>
+    <div class="pill blue" id="updatePill" style="font-size:0.65rem;">📡 Waiting for glove data…</div>
+  </aside>
+
+  <!-- ========== CANVAS AREA ========== -->
+  <main class="canvas-area">
+    <div class="canvas-toolbar">
+      <h2><span class="dot"></span> Air handwriting canvas</h2>
+      <div class="toolbar-actions">
+        <button class="btn" id="clearBtn">🗑️ Clear</button>
+        <button class="btn danger" id="clearMotionBtn">✖ Reset Trail</button>
+      </div>
+    </div>
+
     <div class="canvas-wrapper">
-      <canvas id="handwritingCanvas" width="1000" height="560"></canvas>
-      <div class="hint">
-        <span><span class="live-dot"></span> Draw with mouse / touch</span>
-        <span>FSR1 controls stroke</span>
+      <canvas id="writingCanvas" width="1280" height="720"></canvas>
+      <div class="hint-bar">
+        <div class="left">
+          <span>✍️ FSR1 > 400 → pen down</span>
+          <span class="badge-xy" id="xyDisplay">x: 640  y: 360</span>
+        </div>
+        <div class="gesture-indicator">
+          <span>Motion:</span>
+          <span class="gesture-dot" id="dotX"></span>
+          <span class="gesture-dot" id="dotY"></span>
+          <span class="gesture-dot" id="dotZ"></span>
+        </div>
       </div>
-      <div class="footer-note">Glove data updates live · FSR1&nbsp;>&nbsp;400 draws</div>
     </div>
-  </div>
+  </main>
 </div>
 
 <script>
-  // ============================================================
-  //  FIREBASE CONFIG (exactly as in ESP32)
-  // ============================================================
+  // =============================================================
+  //  FIREBASE INIT (identical to ESP32 config)
+  // =============================================================
   const firebaseConfig = {
     apiKey: "AIzaSyB6FVMUnIJTbqyIWW_K8_zHlsaDTazn9zk",
     databaseURL: "https://project-903ed-default-rtdb.asia-southeast1.firebasedatabase.app",
   };
-
   firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-  const latestRef = database.ref('/FSR_Monitor/latest');
+  const db = firebase.database();
+  const latestRef = db.ref('/FSR_Monitor/latest');
 
-  // ============================================================
-  //  DOM ELEMENTS
-  // ============================================================
-  const fsrGrid = document.getElementById('fsrGrid');
-  const axVal = document.getElementById('axVal');
-  const ayVal = document.getElementById('ayVal');
-  const azVal = document.getElementById('azVal');
-  const gxVal = document.getElementById('gxVal');
-  const gyVal = document.getElementById('gyVal');
-  const gzVal = document.getElementById('gzVal');
-  const tempVal = document.getElementById('tempVal');
-  const mpuStatus = document.getElementById('mpuStatus');
-  const wifiBadge = document.getElementById('wifiBadge');
-  const firebaseBadge = document.getElementById('firebaseBadge');
-  const canvas = document.getElementById('handwritingCanvas');
+  // =============================================================
+  //  DOM REFERENCES
+  // =============================================================
+  const canvas = document.getElementById('writingCanvas');
   const ctx = canvas.getContext('2d');
-  const clearBtn = document.getElementById('clearCanvasBtn');
 
-  // ============================================================
-  //  FSR UI (5 bars)
-  // ============================================================
+  const fsrContainer = document.getElementById('fsrContainer');
+  const fsrSumEl = document.getElementById('fsrSum');
+
+  const mAx = document.getElementById('mAx');
+  const mAy = document.getElementById('mAy');
+  const mAz = document.getElementById('mAz');
+  const mGx = document.getElementById('mGx');
+  const mGy = document.getElementById('mGy');
+  const mGz = document.getElementById('mGz');
+
+  const wifiPill = document.getElementById('wifiPill');
+  const fbPill = document.getElementById('fbPill');
+  const updatePill = document.getElementById('updatePill');
+
+  const writingToggle = document.getElementById('writingToggle');
+  const sensitivitySlider = document.getElementById('sensitivitySlider');
+  const sensitivityVal = document.getElementById('sensitivityVal');
+
+  const xyDisplay = document.getElementById('xyDisplay');
+  const dotX = document.getElementById('dotX');
+  const dotY = document.getElementById('dotY');
+  const dotZ = document.getElementById('dotZ');
+
+  const clearBtn = document.getElementById('clearBtn');
+  const clearMotionBtn = document.getElementById('clearMotionBtn');
+
+  // =============================================================
+  //  FSR ROWS (5 sensors)
+  // =============================================================
   const FSR_COUNT = 5;
-  const fsrBars = [];   // fill elements
-  const fsrValueSpans = [];
+  const fsrFills = [];
+  const fsrNums = [];
 
   for (let i = 0; i < FSR_COUNT; i++) {
-    const item = document.createElement('div');
-    item.className = 'fsr-item';
-    item.innerHTML = `
+    const row = document.createElement('div');
+    row.className = 'fsr-row';
+    row.innerHTML = `
       <span class="fsr-label">FSR ${i+1}</span>
-      <div class="fsr-bar-bg"><div class="fsr-bar-fill" id="fsrFill${i}"></div></div>
-      <span class="fsr-value" id="fsrVal${i}">0</span>
+      <div class="fsr-track"><div class="fsr-fill" id="fill${i}"></div></div>
+      <span class="fsr-num" id="num${i}">0</span>
     `;
-    fsrGrid.appendChild(item);
-    fsrBars.push(document.getElementById(`fsrFill${i}`));
-    fsrValueSpans.push(document.getElementById(`fsrVal${i}`));
+    fsrContainer.appendChild(row);
+    fsrFills.push(document.getElementById(`fill${i}`));
+    fsrNums.push(document.getElementById(`num${i}`));
   }
 
-  // ============================================================
-  //  HANDWRITING CANVAS (air drawing simulation)
-  // ============================================================
-  let isDrawing = false;
-  let lastX = 0, lastY = 0;
+  // =============================================================
+  //  MOTION-BASED AIR WRITING ENGINE
+  // =============================================================
 
-  // scale factor for canvas resolution (1000x560) vs CSS display
+  // --- state ---
+  let motionWritingEnabled = false;        // toggled by user
+  let penDown = false;                     // FSR1 > threshold
+  let currentX = canvas.width / 2;         // current drawing position (px)
+  let currentY = canvas.height / 2;
+  let lastX = currentX, lastY = currentY;
+
+  // Motion integration
+  let vx = 0, vy = 0;                      // velocity accumulators (pixels per frame)
+  const FRICTION = 0.85;                   // slows velocity each frame when pen lifted
+  const ACCEL_SCALE = 8.0;                 // converts g to pixel/frame²
+  const GYRO_SCALE = 0.08;                 // gyro influence
+
+  // Sensor data (latest)
+  let sensor = {
+    ax: 0, ay: 0, az: 0,
+    gx: 0, gy: 0, gz: 0,
+    fsr: [0, 0, 0, 0, 0],
+    mpuOK: false,
+    lastUpdate: 0,
+    hasData: false
+  };
+
+  // Sensitivity multiplier from slider
+  let sensitivity = 1.4;
+  sensitivitySlider.addEventListener('input', (e) => {
+    sensitivity = parseFloat(e.target.value);
+    sensitivityVal.textContent = sensitivity.toFixed(1);
+  });
+
+  // Toggle motion writing
+  writingToggle.addEventListener('click', () => {
+    motionWritingEnabled = !motionWritingEnabled;
+    writingToggle.classList.toggle('on', motionWritingEnabled);
+    if (motionWritingEnabled) {
+      // reset velocity and position to centre when enabling
+      vx = 0; vy = 0;
+      currentX = canvas.width / 2;
+      currentY = canvas.height / 2;
+      lastX = currentX; lastY = currentY;
+      updateXYDisplay();
+    }
+    canvas.classList.toggle('writing', motionWritingEnabled && penDown);
+  });
+
+  // Clear canvas (full redraw)
+  clearBtn.addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  // Reset motion trail (velocity & position)
+  clearMotionBtn.addEventListener('click', () => {
+    vx = 0; vy = 0;
+    currentX = canvas.width / 2;
+    currentY = canvas.height / 2;
+    lastX = currentX; lastY = currentY;
+    updateXYDisplay();
+  });
+
+  // =============================================================
+  //  FIREBASE LISTENER → update sensor object
+  // =============================================================
+  latestRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (!data) {
+      sensor.hasData = false;
+      fbPill.textContent = '🔥 Firebase — no data';
+      fbPill.className = 'pill red';
+      updatePill.textContent = '📡 Waiting for glove data…';
+      return;
+    }
+
+    sensor.hasData = true;
+    sensor.lastUpdate = Date.now();
+
+    // FSR values
+    for (let i = 0; i < FSR_COUNT; i++) {
+      let val = data[`fsr${i+1}`];
+      sensor.fsr[i] = (val !== undefined && val !== null) ? Number(val) : 0;
+    }
+
+    // MPU values
+    sensor.ax = Number(data.accel_x_g) || 0;
+    sensor.ay = Number(data.accel_y_g) || 0;
+    sensor.az = Number(data.accel_z_g) || 0;
+    sensor.gx = Number(data.gyro_x_dps) || 0;
+    sensor.gy = Number(data.gyro_y_dps) || 0;
+    sensor.gz = Number(data.gyro_z_dps) || 0;
+    sensor.mpuOK = data.mpu_ok === true;
+
+    // --- update UI elements ---
+    // FSR bars
+    let sum = 0;
+    for (let i = 0; i < FSR_COUNT; i++) {
+      const raw = sensor.fsr[i];
+      sum += raw;
+      const percent = Math.min(100, (raw / 4095) * 100);
+      fsrFills[i].style.width = percent + '%';
+      fsrNums[i].textContent = raw;
+    }
+    fsrSumEl.textContent = sum;
+
+    // MPU mini displays
+    mAx.textContent = sensor.ax.toFixed(2);
+    mAy.textContent = sensor.ay.toFixed(2);
+    mAz.textContent = sensor.az.toFixed(2);
+    mGx.textContent = sensor.gx.toFixed(0);
+    mGy.textContent = sensor.gy.toFixed(0);
+    mGz.textContent = sensor.gz.toFixed(0);
+
+    // Status pills
+    wifiPill.textContent = '⚡ WiFi — online';
+    wifiPill.className = 'pill green';
+    fbPill.textContent = '🔥 Firebase — synced';
+    fbPill.className = 'pill green';
+    updatePill.textContent = '📡 Live · ' + new Date().toLocaleTimeString();
+
+  }, (error) => {
+    console.error(error);
+    fbPill.textContent = '🔥 Firebase — error';
+    fbPill.className = 'pill red';
+    wifiPill.textContent = '⚡ WiFi — unknown';
+    wifiPill.className = 'pill';
+  });
+
+  // =============================================================
+  //  ANIMATION LOOP: motion integration + drawing
+  // =============================================================
+  function updateXYDisplay() {
+    xyDisplay.textContent = `x: ${Math.round(currentX)}  y: ${Math.round(currentY)}`;
+  }
+
+  function animate() {
+    // Check if we should run motion integration
+    const now = Date.now();
+    const dataFresh = sensor.hasData && (now - sensor.lastUpdate < 3000); // 3s freshness
+
+    // --- pen down condition: FSR1 > 400 (index 0) ---
+    const fsr1 = sensor.fsr[0] || 0;
+    const shouldPenDown = motionWritingEnabled && dataFresh && fsr1 > 400;
+
+    if (shouldPenDown !== penDown) {
+      penDown = shouldPenDown;
+      canvas.classList.toggle('writing', penDown);
+      if (penDown) {
+        // reset last position to current on pen down to avoid jump lines
+        lastX = currentX; lastY = currentY;
+      }
+    }
+
+    // --- update velocity from motion sensors ---
+    if (motionWritingEnabled && dataFresh) {
+      // Map acceleration to velocity change (pixels/frame²)
+      // We use tilt-like mapping: ax -> horizontal, ay -> vertical (inverted)
+      // Because MPU accelerometer reads gravity, we use raw g values.
+      const axG = sensor.ax;
+      const ayG = sensor.ay;
+
+      // Gyro contributes to "flick" or rotational movement (optional)
+      const gzRad = sensor.gz * (Math.PI / 180);
+      const gyroInfluence = sensor.gz * GYRO_SCALE * 0.5;
+
+      // Acceleration in pixels per frame²
+      const accelX = (axG * ACCEL_SCALE * sensitivity) + gyroInfluence;
+      const accelY = (-ayG * ACCEL_SCALE * sensitivity); // invert ay so forward tilt moves up
+
+      vx += accelX;
+      vy += accelY;
+
+      // Apply friction / damping
+      vx *= FRICTION;
+      vy *= FRICTION;
+
+      // Limit max speed
+      const maxSpeed = 22;
+      vx = Math.max(-maxSpeed, Math.min(maxSpeed, vx));
+      vy = Math.max(-maxSpeed, Math.min(maxSpeed, vy));
+
+      // Update position
+      currentX += vx;
+      currentY += vy;
+
+      // Keep within canvas bounds (with margin)
+      const margin = 20;
+      if (currentX < margin) { currentX = margin; vx = 0; }
+      if (currentX > canvas.width - margin) { currentX = canvas.width - margin; vx = 0; }
+      if (currentY < margin) { currentY = margin; vy = 0; }
+      if (currentY > canvas.height - margin) { currentY = canvas.height - margin; vy = 0; }
+
+      updateXYDisplay();
+    } else {
+      // when writing disabled or no data, we still update display but don't integrate
+      // but also if pen is down and data lost, we should lift pen
+    }
+
+    // --- DRAWING ---
+    if (penDown) {
+      // Draw line from lastX/lastY to currentX/currentY
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(currentX, currentY);
+      ctx.strokeStyle = '#7aa9e6';
+      ctx.lineWidth = 4.0;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = '#3b82f6';
+      ctx.shadowBlur = 14;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      lastX = currentX;
+      lastY = currentY;
+    } else {
+      // when pen is up, keep lastX/Y synced with current so no lines jump when pen goes down again
+      lastX = currentX;
+      lastY = currentY;
+    }
+
+    // --- update gesture indicator dots ---
+    const threshold = 0.15;
+    dotX.classList.toggle('active', Math.abs(sensor.ax) > threshold);
+    dotY.classList.toggle('active', Math.abs(sensor.ay) > threshold);
+    dotZ.classList.toggle('active', Math.abs(sensor.az - 1.0) > 0.3); // deviation from 1g
+
+    requestAnimationFrame(animate);
+  }
+
+  // =============================================================
+  //  FRESHNESS CHECK: if no data for >5s, show offline pill
+  // =============================================================
+  setInterval(() => {
+    if (!sensor.hasData || (Date.now() - sensor.lastUpdate > 5000)) {
+      wifiPill.textContent = '⚡ WiFi — offline?';
+      wifiPill.className = 'pill red';
+      fbPill.textContent = '🔥 Firebase — stale';
+      fbPill.className = 'pill red';
+      updatePill.textContent = '📡 No recent data…';
+      // Also lift pen if data is stale
+      if (penDown) {
+        penDown = false;
+        canvas.classList.remove('writing');
+      }
+    }
+  }, 2000);
+
+  // =============================================================
+  //  MANUAL DRAWING (still allowed, but we focus on motion)
+  // =============================================================
+  let manualDrawing = false;
+  let manualLastX = 0, manualLastY = 0;
+
   function getCanvasCoords(e) {
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;   // canvas physical width / CSS width
+    const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-
     let clientX, clientY;
     if (e.touches) {
       clientX = e.touches[0].clientX;
@@ -437,178 +762,73 @@
       clientX = e.clientX;
       clientY = e.clientY;
     }
-
-    const x = (clientX - rect.left) * scaleX;
-    const y = (clientY - rect.top) * scaleY;
-    return { x, y };
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
   }
 
-  function startDrawing(e) {
+  function manualStart(e) {
+    if (motionWritingEnabled) return; // disable manual when motion writing is active
     e.preventDefault();
-    isDrawing = true;
+    manualDrawing = true;
     const { x, y } = getCanvasCoords(e);
-    lastX = x;
-    lastY = y;
-    // draw a dot for immediate feedback
+    manualLastX = x; manualLastY = y;
     ctx.beginPath();
-    ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
+    ctx.arc(x, y, 3, 0, 2 * Math.PI);
     ctx.fillStyle = '#b8d6ff';
     ctx.fill();
   }
 
-  function draw(e) {
-    if (!isDrawing) return;
+  function manualDraw(e) {
+    if (!manualDrawing || motionWritingEnabled) return;
     e.preventDefault();
     const { x, y } = getCanvasCoords(e);
-
     ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
+    ctx.moveTo(manualLastX, manualLastY);
     ctx.lineTo(x, y);
-    ctx.strokeStyle = '#7aa9e6';
+    ctx.strokeStyle = '#a78bfa';
     ctx.lineWidth = 3.5;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.shadowColor = '#3b82f6';
+    ctx.shadowColor = '#8b5cf6';
     ctx.shadowBlur = 12;
     ctx.stroke();
-    // soft glow effect
     ctx.shadowBlur = 0;
-
-    lastX = x;
-    lastY = y;
+    manualLastX = x; manualLastY = y;
   }
 
-  function stopDrawing(e) {
+  function manualStop(e) {
     if (e) e.preventDefault();
-    isDrawing = false;
+    manualDrawing = false;
   }
 
-  // mouse events
-  canvas.addEventListener('mousedown', startDrawing);
-  canvas.addEventListener('mousemove', draw);
-  canvas.addEventListener('mouseup', stopDrawing);
-  canvas.addEventListener('mouseleave', stopDrawing);
+  // mouse
+  canvas.addEventListener('mousedown', manualStart);
+  canvas.addEventListener('mousemove', manualDraw);
+  canvas.addEventListener('mouseup', manualStop);
+  canvas.addEventListener('mouseleave', manualStop);
+  // touch
+  canvas.addEventListener('touchstart', manualStart, { passive: false });
+  canvas.addEventListener('touchmove', manualDraw, { passive: false });
+  canvas.addEventListener('touchend', manualStop);
+  canvas.addEventListener('touchcancel', manualStop);
 
-  // touch events
-  canvas.addEventListener('touchstart', startDrawing, { passive: false });
-  canvas.addEventListener('touchmove', draw, { passive: false });
-  canvas.addEventListener('touchend', stopDrawing);
-  canvas.addEventListener('touchcancel', stopDrawing);
+  // =============================================================
+  //  INIT
+  // =============================================================
+  updateXYDisplay();
+  // Start animation loop
+  requestAnimationFrame(animate);
 
-  // clear canvas
-  clearBtn.addEventListener('click', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  });
+  // Draw a faint grid / starting hint
+  ctx.font = '16px Inter, sans-serif';
+  ctx.fillStyle = '#1f3142';
+  ctx.textAlign = 'center';
+  ctx.fillText('Enable "Air writing" and tilt the glove to draw', canvas.width/2, canvas.height/2);
+  ctx.fillText('FSR1 > 400 to put pen down', canvas.width/2, canvas.height/2 + 30);
 
-  // initial clear (clean start)
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // ============================================================
-  //  REALTIME DATABASE LISTENER
-  // ============================================================
-  latestRef.on('value', (snapshot) => {
-    const data = snapshot.val();
-    if (!data) {
-      // no data yet – still show "waiting" state, but keep badges
-      firebaseBadge.textContent = '🔥 Firebase — no data';
-      firebaseBadge.className = 'badge offline';
-      return;
-    }
-
-    // ----- FSR values (1..5) -----
-    for (let i = 0; i < FSR_COUNT; i++) {
-      const key = `fsr${i+1}`;
-      let raw = data[key];
-      // fallback if undefined
-      if (raw === undefined || raw === null) raw = 0;
-      // clamp 0..4095 (ESP32 12-bit)
-      const val = Math.min(4095, Math.max(0, raw));
-      const percent = (val / 4095) * 100;
-
-      // update bar + text
-      if (fsrBars[i]) fsrBars[i].style.width = percent + '%';
-      if (fsrValueSpans[i]) fsrValueSpans[i].textContent = val;
-    }
-
-    // ----- MPU6050 -----
-    axVal.textContent = (data.accel_x_g !== undefined) ? Number(data.accel_x_g).toFixed(3) : '—';
-    ayVal.textContent = (data.accel_y_g !== undefined) ? Number(data.accel_y_g).toFixed(3) : '—';
-    azVal.textContent = (data.accel_z_g !== undefined) ? Number(data.accel_z_g).toFixed(3) : '—';
-    gxVal.textContent = (data.gyro_x_dps !== undefined) ? Number(data.gyro_x_dps).toFixed(1) : '—';
-    gyVal.textContent = (data.gyro_y_dps !== undefined) ? Number(data.gyro_y_dps).toFixed(1) : '—';
-    gzVal.textContent = (data.gyro_z_dps !== undefined) ? Number(data.gyro_z_dps).toFixed(1) : '—';
-    tempVal.textContent = (data.mpu_temperature_c !== undefined) ? Number(data.mpu_temperature_c).toFixed(1) + ' °C' : '—';
-    mpuStatus.textContent = data.mpu_ok === true ? 'OK' : (data.mpu_ok === false ? 'ERROR' : '—');
-
-    // ----- WiFi & Firebase badges -----
-    // WiFi badge: we can't read WiFi status directly, but if data is present, glove is online via WiFi
-    wifiBadge.textContent = '⚡ WiFi — online';
-    wifiBadge.className = 'badge online';
-
-    firebaseBadge.textContent = '🔥 Firebase — synced';
-    firebaseBadge.className = 'badge online';
-  }, (error) => {
-    console.error('Firebase read error:', error);
-    firebaseBadge.textContent = '🔥 Firebase — error';
-    firebaseBadge.className = 'badge offline';
-    wifiBadge.textContent = '⚡ WiFi — unknown';
-    wifiBadge.className = 'badge';
-  });
-
-  // If we ever lose connection, show offline (no data for a while)
-  // Additional fallback: show offline after 8 seconds without update
-  let lastUpdateTime = Date.now();
-  latestRef.on('value', () => { lastUpdateTime = Date.now(); });
-
-  setInterval(() => {
-    if (Date.now() - lastUpdateTime > 8000) {
-      // no data for 8s -> likely offline
-      wifiBadge.textContent = '⚡ WiFi — offline?';
-      wifiBadge.className = 'badge offline';
-      firebaseBadge.textContent = '🔥 Firebase — stale';
-      firebaseBadge.className = 'badge offline';
-    }
-  }, 4000);
-
-  // ============================================================
-  //  EXTRA: FSR1 > 400 triggers a visual glow on canvas (air draw hint)
-  //  We'll add a subtle visual cue: if FSR1 is high, show a small ring.
-  //  (This doesn't interfere with manual drawing.)
-  // ============================================================
-  // We'll keep an eye on FSR1 bar and add a class to canvas wrapper if needed
-  // But to keep simple: not needed, but here's a tiny extra: change canvas border on FSR1 high?
-  // Actually nice touch: when fsr1 > 400, add "active" class to canvas wrapper
-  const canvasWrapper = document.querySelector('.canvas-wrapper');
-  latestRef.on('value', (snap) => {
-    const d = snap.val();
-    if (d && d.fsr1 !== undefined) {
-      if (d.fsr1 > 400) {
-        canvas.style.boxShadow = '0 0 0 2px rgba(96, 165, 250, 0.6), 0 12px 30px -12px #000';
-      } else {
-        canvas.style.boxShadow = '0 0 0 1px rgba(59, 130, 246, 0.1), 0 12px 30px -12px #000';
-      }
-    }
-  });
-
-  // ============================================================
-  //  initial UI sync (show dummy placeholder until first data)
-  // ============================================================
-  for (let i = 0; i < FSR_COUNT; i++) {
-    fsrBars[i].style.width = '0%';
-    fsrValueSpans[i].textContent = '0';
-  }
-
-  // set initial badges
-  wifiBadge.textContent = '⚡ WiFi — waiting';
-  wifiBadge.className = 'badge';
-  firebaseBadge.textContent = '🔥 Firebase — waiting';
-  firebaseBadge.className = 'badge';
-
-  // ============================================================
-  //  save a reference (just for fun – no extra functionality)
-  // ============================================================
-  console.log('Smart Glove dashboard ready. Listening to /FSR_Monitor/latest');
-
+  console.log('Smart Glove motion writing ready');
 </script>
 </body>
 </html>
