@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Glove · IMU Air Writing v2</title>
+  <title>Smart Glove · IMU Air Writing + FSR</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
       max-width: 1520px;
       width: 100%;
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 330px 1fr;
       gap: 1.2rem;
       background: rgba(12, 18, 26, 0.92);
       backdrop-filter: blur(16px);
@@ -61,6 +61,29 @@
       display: flex; justify-content: space-between; align-items: center;
     }
 
+    /* FSR bars */
+    .fsr-row {
+      display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.55rem;
+    }
+    .fsr-row:last-child { margin-bottom: 0; }
+    .fsr-label { width: 46px; font-size: 0.72rem; font-weight: 600; color: #b0c6e0; }
+    .fsr-track {
+      flex: 1; height: 8px; background: #1a2635; border-radius: 10px; overflow: hidden;
+    }
+    .fsr-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #2563eb, #60a5fa, #a78bfa);
+      border-radius: 10px;
+      transition: width 0.1s linear;
+    }
+    .fsr-fill.trigger { background: linear-gradient(90deg, #22c55e, #4ade80, #86efac); }
+    .fsr-num {
+      width: 44px; text-align: right; font-size: 0.72rem;
+      font-weight: 600; color: #cbdffa; font-variant-numeric: tabular-nums;
+    }
+    .fsr-num.trigger { color: #86efac; }
+
+    /* IMU readouts */
     .imu-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.45rem; }
     .imu-cell {
       background: #0a121c; border-radius: 0.9rem; padding: 0.55rem 0.2rem;
@@ -71,6 +94,7 @@
     .imu-cell .k { font-size: 0.58rem; font-weight: 700; color: #5a7290; letter-spacing: 0.06em; }
     .imu-cell .v { font-size: 0.88rem; font-weight: 700; color: #c9defa; font-variant-numeric: tabular-nums; margin-top: 0.1rem; }
 
+    /* Motion state */
     .motion-state {
       display: flex; align-items: center; justify-content: space-between;
       background: #0a121c; border-radius: 1.2rem; padding: 0.7rem 1rem;
@@ -99,7 +123,7 @@
       -webkit-appearance: none; width: 16px; height: 16px;
       background: #3b82f6; border-radius: 50%; cursor: pointer; border: 2px solid #0c131c;
     }
-    .slider-val { font-size: 0.72rem; font-weight: 700; color: #90b8f0; width: 28px; text-align: right; }
+    .slider-val { font-size: 0.72rem; font-weight: 700; color: #90b8f0; width: 32px; text-align: right; }
 
     .status-flex { display: flex; gap: 0.5rem; font-size: 0.7rem; }
     .pill {
@@ -143,6 +167,9 @@
     .btn:hover { background: #1f3044; color: #d7eaff; border-color: #3b5b80; }
     .btn.danger { color: #f87171; border-color: #4a2a2a; }
     .btn.danger:hover { background: #2b1a1a; }
+    .btn.active-mode {
+      background: #16273b; color: #7aa9e6; border-color: #3b82f6;
+    }
 
     .canvas-wrapper { flex: 1; padding: 1rem 1.4rem 1.4rem 1.4rem; display: flex; flex-direction: column; }
 
@@ -194,7 +221,21 @@
       <div class="brand-icon">🧤</div>
       <div>
         <h1>Smart Glove</h1>
-        <div class="sub">IMU Air Writing · v2</div>
+        <div class="sub">IMU Writing + FSR Hybrid</div>
+      </div>
+    </div>
+
+    <!-- FSR Card -->
+    <div class="card">
+      <div class="card-title">
+        <span>✋ FSR Pressure</span>
+        <span id="fsrSum" style="color:#3b82f6; font-weight:700;">0</span>
+      </div>
+      <div id="fsrContainer">
+        <!-- JS builds rows -->
+      </div>
+      <div style="font-size:0.6rem; color:#4a627d; margin-top:0.7rem; text-align:center;">
+        FSR1 &gt; <span id="fsrTriggerDisplay" style="color:#22c55e; font-weight:700;">400</span> → pen down
       </div>
     </div>
 
@@ -209,31 +250,37 @@
         <div class="imu-cell" id="cellGy"><div class="k">GY (°/s)</div><div class="v" id="valGy">—</div></div>
         <div class="imu-cell" id="cellGz"><div class="k">GZ (°/s)</div><div class="v" id="valGz">—</div></div>
       </div>
-      <div style="font-size:0.6rem; color:#4a627d; margin-top:0.7rem; text-align:center;">
-        Tilt to steer · Flick wrist to toggle pen
-      </div>
     </div>
 
     <!-- Motion Writing Control -->
     <div class="card" style="padding:0.9rem 1rem;">
       <div class="motion-state" style="background:transparent; padding:0; border:none;">
-        <div class="label">✍️ IMU Writing</div>
+        <div class="label">✍️ Writing</div>
         <div class="pen-indicator">
           <span class="pen-dot" id="penDot"></span>
           <span class="pen-text" id="penText">LIFTED</span>
         </div>
       </div>
 
-      <!-- Gesture toggle button -->
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:0.7rem;">
-        <div class="label" style="font-size:0.68rem; color:#6d84a0;">Pen mode</div>
-        <button id="penToggleBtn" class="btn" style="padding:0.3rem 1rem; font-size:0.68rem;">LIFTED</button>
+      <!-- Pen mode selector -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:0.7rem; gap:0.4rem;">
+        <div class="label" style="font-size:0.66rem; color:#6d84a0;">Pen trigger</div>
+        <div style="display:flex; gap:0.3rem;">
+          <button id="modeFsr" class="btn active-mode" style="padding:0.25rem 0.7rem; font-size:0.62rem;">FSR1</button>
+          <button id="modeFlick" class="btn" style="padding:0.25rem 0.7rem; font-size:0.62rem;">Flick</button>
+          <button id="modeManual" class="btn" style="padding:0.25rem 0.7rem; font-size:0.62rem;">Manual</button>
+        </div>
       </div>
 
       <div class="slider-row">
         <label>Sensitivity</label>
         <input type="range" id="sensitivitySlider" min="0.4" max="3.5" step="0.1" value="1.6">
         <span class="slider-val" id="sensitivityVal">1.6</span>
+      </div>
+      <div class="slider-row">
+        <label>FSR thresh</label>
+        <input type="range" id="fsrThreshSlider" min="100" max="2000" step="50" value="400">
+        <span class="slider-val" id="fsrThreshVal">400</span>
       </div>
       <div class="slider-row">
         <label>Flick thresh</label>
@@ -258,7 +305,7 @@
   <!-- ========== CANVAS ========== -->
   <main class="canvas-area">
     <div class="canvas-toolbar">
-      <h2><span class="dot"></span> IMU air handwriting</h2>
+      <h2><span class="dot"></span> Smart Glove air writing</h2>
       <div class="toolbar-actions">
         <button class="btn" id="clearBtn">🗑️ Clear</button>
         <button class="btn danger" id="resetTrailBtn">✖ Reset pen</button>
@@ -269,7 +316,7 @@
       <canvas id="canvas" width="1280" height="720"></canvas>
       <div class="hint-bar">
         <div class="left">
-          <span>✍️ Flick wrist (GZ) to toggle pen</span>
+          <span id="triggerHint">✍️ FSR1 triggers pen down</span>
           <span class="badge-xy" id="xyDisplay">x: 640  y: 360</span>
         </div>
         <div class="gesture-indicator">
@@ -279,7 +326,7 @@
           <span class="gesture-dot" id="dotGz"></span>
         </div>
       </div>
-      <div class="legend">Pen toggles on quick |GZ| spike · Tilt (AX/AY) moves cursor</div>
+      <div class="legend">Tilt (AX/AY) moves cursor · Trigger mode selectable in sidebar</div>
     </div>
   </main>
 </div>
@@ -302,6 +349,10 @@
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
 
+  const fsrContainer = document.getElementById('fsrContainer');
+  const fsrSumEl = document.getElementById('fsrSum');
+  const fsrTriggerDisplay = document.getElementById('fsrTriggerDisplay');
+
   const valAx = document.getElementById('valAx');
   const valAy = document.getElementById('valAy');
   const valAz = document.getElementById('valAz');
@@ -318,10 +369,15 @@
 
   const penDot = document.getElementById('penDot');
   const penText = document.getElementById('penText');
-  const penToggleBtn = document.getElementById('penToggleBtn');
+
+  const modeFsr = document.getElementById('modeFsr');
+  const modeFlick = document.getElementById('modeFlick');
+  const modeManual = document.getElementById('modeManual');
 
   const sensitivitySlider = document.getElementById('sensitivitySlider');
   const sensitivityVal = document.getElementById('sensitivityVal');
+  const fsrThreshSlider = document.getElementById('fsrThreshSlider');
+  const fsrThreshVal = document.getElementById('fsrThreshVal');
   const flickSlider = document.getElementById('flickSlider');
   const flickVal = document.getElementById('flickVal');
   const smoothSlider = document.getElementById('smoothSlider');
@@ -335,16 +391,39 @@
   const dotAx = document.getElementById('dotAx');
   const dotAy = document.getElementById('dotAy');
   const dotGz = document.getElementById('dotGz');
+  const triggerHint = document.getElementById('triggerHint');
 
   const clearBtn = document.getElementById('clearBtn');
   const resetTrailBtn = document.getElementById('resetTrailBtn');
 
   // =============================================================
+  //  FSR ROWS (5 sensors)
+  // =============================================================
+  const FSR_COUNT = 5;
+  const fsrFills = [];
+  const fsrNums = [];
+
+  for (let i = 0; i < FSR_COUNT; i++) {
+    const row = document.createElement('div');
+    row.className = 'fsr-row';
+    row.innerHTML = `
+      <span class="fsr-label">FSR ${i+1}</span>
+      <div class="fsr-track"><div class="fsr-fill" id="fill${i}"></div></div>
+      <span class="fsr-num" id="num${i}">0</span>
+    `;
+    fsrContainer.appendChild(row);
+    fsrFills.push(document.getElementById(`fill${i}`));
+    fsrNums.push(document.getElementById(`num${i}`));
+  }
+
+  // =============================================================
   //  STATE
   // =============================================================
   let sensitivity = 1.6;
-  let flickThreshold = 120;      // |GZ| spike to toggle pen
-  let smoothing = 0.80;          // velocity smoothing factor
+  let fsrThreshold = 400;
+  let flickThreshold = 120;
+  let smoothing = 0.80;
+  let penMode = 'fsr';        // 'fsr' | 'flick' | 'manual'
 
   // Canvas drawing state
   let penDown = false;
@@ -359,13 +438,14 @@
 
   // Flick detection
   let lastFlickTime = 0;
-  const FLICK_COOLDOWN = 400;    // ms between toggles
+  const FLICK_COOLDOWN = 450;
   let prevGz = 0;
 
   // Latest sensor data
   let sensor = {
     ax: 0, ay: 0, az: 0,
     gx: 0, gy: 0, gz: 0,
+    fsr: [0, 0, 0, 0, 0],
     hasData: false,
     lastUpdate: 0,
     mpuOK: false
@@ -378,6 +458,11 @@
     sensitivity = parseFloat(e.target.value);
     sensitivityVal.textContent = sensitivity.toFixed(1);
   });
+  fsrThreshSlider.addEventListener('input', (e) => {
+    fsrThreshold = parseInt(e.target.value, 10);
+    fsrThreshVal.textContent = fsrThreshold;
+    fsrTriggerDisplay.textContent = fsrThreshold;
+  });
   flickSlider.addEventListener('input', (e) => {
     flickThreshold = parseInt(e.target.value, 10);
     flickVal.textContent = flickThreshold;
@@ -386,6 +471,28 @@
     smoothing = parseFloat(e.target.value);
     smoothVal.textContent = smoothing.toFixed(2);
   });
+
+  // =============================================================
+  //  MODE SELECTOR
+  // =============================================================
+  function setPenMode(mode) {
+    penMode = mode;
+    [modeFsr, modeFlick, modeManual].forEach(btn => btn.classList.remove('active-mode'));
+    if (mode === 'fsr') {
+      modeFsr.classList.add('active-mode');
+      triggerHint.textContent = '✍️ FSR1 triggers pen down';
+    } else if (mode === 'flick') {
+      modeFlick.classList.add('active-mode');
+      triggerHint.textContent = '✍️ Flick wrist (GZ) to toggle pen';
+    } else {
+      modeManual.classList.add('active-mode');
+      triggerHint.textContent = '✍️ Manual pen toggle (sidebar button)';
+    }
+  }
+
+  modeFsr.addEventListener('click', () => setPenMode('fsr'));
+  modeFlick.addEventListener('click', () => setPenMode('flick'));
+  modeManual.addEventListener('click', () => setPenMode('manual'));
 
   // =============================================================
   //  FIREBASE LISTENER
@@ -403,6 +510,7 @@
     sensor.hasData = true;
     sensor.lastUpdate = Date.now();
 
+    // IMU
     sensor.ax = Number(data.accel_x_g) || 0;
     sensor.ay = Number(data.accel_y_g) || 0;
     sensor.az = Number(data.accel_z_g) || 0;
@@ -411,7 +519,33 @@
     sensor.gz = Number(data.gyro_z_dps) || 0;
     sensor.mpuOK = data.mpu_ok === true;
 
-    // UI numeric
+    // FSR
+    for (let i = 0; i < FSR_COUNT; i++) {
+      const v = data[`fsr${i+1}`];
+      sensor.fsr[i] = (v !== undefined && v !== null) ? Number(v) : 0;
+    }
+
+    // ----- Update FSR UI -----
+    let sum = 0;
+    for (let i = 0; i < FSR_COUNT; i++) {
+      const raw = sensor.fsr[i];
+      sum += raw;
+      const percent = Math.min(100, (raw / 4095) * 100);
+      fsrFills[i].style.width = percent + '%';
+      fsrNums[i].textContent = raw;
+
+      // Highlight FSR1 if above trigger
+      if (i === 0 && raw > fsrThreshold) {
+        fsrFills[i].classList.add('trigger');
+        fsrNums[i].classList.add('trigger');
+      } else {
+        fsrFills[i].classList.remove('trigger');
+        fsrNums[i].classList.remove('trigger');
+      }
+    }
+    fsrSumEl.textContent = sum;
+
+    // ----- Update IMU UI -----
     valAx.textContent = sensor.ax.toFixed(2);
     valAy.textContent = sensor.ay.toFixed(2);
     valAz.textContent = sensor.az.toFixed(2);
@@ -419,7 +553,6 @@
     valGy.textContent = sensor.gy.toFixed(0);
     valGz.textContent = sensor.gz.toFixed(0);
 
-    // Highlight
     const thr = 0.2;
     cellAx.classList.toggle('active', Math.abs(sensor.ax) > thr);
     cellAy.classList.toggle('active', Math.abs(sensor.ay) > thr);
@@ -440,16 +573,18 @@
     dotAy.classList.toggle('active', Math.abs(sensor.ay) > 0.25);
     dotGz.classList.toggle('active', Math.abs(sensor.gz) > flickThreshold * 0.6);
 
-    // --- Flick detection (GZ spike) to toggle pen ---
+    // ----- Flick detection (only in flick mode) -----
     const now = Date.now();
-    const gzAbs = Math.abs(sensor.gz);
-    const gzDelta = Math.abs(sensor.gz - prevGz);
-    prevGz = sensor.gz;
+    if (penMode === 'flick') {
+      const gzAbs = Math.abs(sensor.gz);
+      const gzDelta = Math.abs(sensor.gz - prevGz);
 
-    if (gzAbs > flickThreshold && gzDelta > flickThreshold * 0.5 && (now - lastFlickTime) > FLICK_COOLDOWN) {
-      lastFlickTime = now;
-      setPenState(!penDown);
+      if (gzAbs > flickThreshold && gzDelta > flickThreshold * 0.5 && (now - lastFlickTime) > FLICK_COOLDOWN) {
+        lastFlickTime = now;
+        setPenState(!penDown);
+      }
     }
+    prevGz = sensor.gz;
 
   }, (error) => {
     console.error(error);
@@ -469,17 +604,19 @@
     penDot.classList.toggle('down', penDown);
     penText.textContent = penDown ? 'DOWN' : 'LIFTED';
     penText.classList.toggle('down', penDown);
-    penToggleBtn.textContent = penDown ? 'DOWN' : 'LIFTED';
-    penToggleBtn.style.borderColor = penDown ? '#3b82f6' : '#243a52';
-    penToggleBtn.style.color = penDown ? '#7aa9e6' : '#b0cbf0';
     if (penDown) {
       lastX = cursorX;
       lastY = cursorY;
     }
   }
 
-  // Manual toggle button
-  penToggleBtn.addEventListener('click', () => setPenState(!penDown));
+  // Manual toggle: click on pen indicator / state
+  penDot.addEventListener('click', () => {
+    if (penMode === 'manual') setPenState(!penDown);
+  });
+  penText.addEventListener('click', () => {
+    if (penMode === 'manual') setPenState(!penDown);
+  });
 
   // =============================================================
   //  DRAWING HELPERS
@@ -495,19 +632,31 @@
     const now = Date.now();
     const fresh = sensor.hasData && (now - sensor.lastUpdate < 2500);
 
+    // ----- Determine pen state based on mode -----
     if (fresh) {
-      // Tilt steering
+      if (penMode === 'fsr') {
+        const fsr1 = sensor.fsr[0] || 0;
+        setPenState(fsr1 > fsrThreshold);
+      }
+      // 'flick' mode handled in Firebase callback
+      // 'manual' mode handled by user clicks
+    } else {
+      // No fresh data: lift pen
+      if (penDown) setPenState(false);
+    }
+
+    // ----- Motion integration -----
+    if (fresh) {
       const axG = sensor.ax;
       const ayG = sensor.ay;
 
-      // Gyro fine steering
       const gyroSteerX = sensor.gy * 0.02;
       const gyroSteerY = -sensor.gx * 0.02;
 
       const accelX = (axG * ACCEL_SCALE * sensitivity) + gyroSteerX;
       const accelY = (-ayG * ACCEL_SCALE * sensitivity) + gyroSteerY;
 
-      // Apply smoothing to velocity
+      // Smooth velocity
       vx = (vx * smoothing) + (accelX * (1 - smoothing));
       vy = (vy * smoothing) + (accelY * (1 - smoothing));
 
@@ -515,7 +664,7 @@
       vx *= FRICTION;
       vy *= FRICTION;
 
-      // Limit
+      // Limit speed
       const maxSpeed = 26;
       vx = Math.max(-maxSpeed, Math.min(maxSpeed, vx));
       vy = Math.max(-maxSpeed, Math.min(maxSpeed, vy));
@@ -538,7 +687,7 @@
       if (Math.abs(vy) < 0.05) vy = 0;
     }
 
-    // Draw stroke if pen is down
+    // ----- Draw stroke -----
     if (penDown && fresh) {
       ctx.beginPath();
       ctx.moveTo(lastX, lastY);
@@ -596,6 +745,7 @@
   // =============================================================
   //  INIT
   // =============================================================
+  setPenMode('fsr');
   updateXYDisplay();
   setPenState(false);
 
@@ -603,15 +753,15 @@
   ctx.font = '18px Inter, sans-serif';
   ctx.fillStyle = '#13212f';
   ctx.textAlign = 'center';
-  ctx.fillText('Tilt glove to move cursor · Flick wrist (GZ) to toggle pen', canvas.width / 2, canvas.height / 2 - 10);
+  ctx.fillText('Tilt glove to move cursor', canvas.width / 2, canvas.height / 2 - 10);
   ctx.font = '14px Inter, sans-serif';
   ctx.fillStyle = '#0f1b28';
-  ctx.fillText('Pen state can also be toggled with the button in the sidebar', canvas.width / 2, canvas.height / 2 + 24);
+  ctx.fillText('Trigger: FSR1 pressure · Wrist flick · Manual button', canvas.width / 2, canvas.height / 2 + 24);
 
-  // Start
+  // Start loop
   requestAnimationFrame(animate);
 
-  console.log('IMU Air Writing v2 ready — FSR fully ignored');
+  console.log('Smart Glove: IMU + FSR hybrid ready');
 </script>
 </body>
 </html>
