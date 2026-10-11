@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Glove · Air Handwriting</title>
+  <!-- Firebase + Chart.js + Google Fonts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0b0f17;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: #eef2f6;
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dashboard {
+      max-width: 1480px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.1fr 1.9fr;
+      gap: 1.5rem;
+      background: rgba(18, 25, 35, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 3rem;
+      padding: 2rem;
+      border: 1px solid rgba(70, 130, 200, 0.2);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    }
+
+    /* left column */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .glove-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .glove-icon {
+      font-size: 2.7rem;
+      filter: drop-shadow(0 0 12px #3b82f6);
+    }
+
+    .glove-header h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #b8d6ff, #7aa9e6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1.2;
+    }
+
+    .glove-header .sub {
+      font-size: 0.85rem;
+      color: #8a9bb5;
+      font-weight: 400;
+      margin-top: 0.2rem;
+    }
+
+    .card {
+      background: #131b26;
+      border-radius: 2rem;
+      padding: 1.4rem 1.6rem;
+      border: 1px solid #27384d;
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.02), 0 8px 20px -10px #000000;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      color: #7e95b0;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .fsr-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .fsr-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .fsr-label {
+      width: 52px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #b0c6e0;
+    }
+
+    .fsr-bar-bg {
+      flex: 1;
+      height: 10px;
+      background: #1c2a3a;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .fsr-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #60a5fa, #a78bfa);
+      border-radius: 20px;
+      transition: width 0.12s ease;
+    }
+
+    .fsr-value {
+      width: 48px;
+      text-align: right;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #cbdffa;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mpu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem 1.2rem;
+    }
+
+    .mpu-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      padding: 0.2rem 0;
+      border-bottom: 1px dashed #1f2e40;
+    }
+
+    .mpu-key {
+      color: #8fa3be;
+      font-weight: 400;
+    }
+
+    .mpu-val {
+      font-weight: 600;
+      color: #d3e6ff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .badge {
+      padding: 0.3rem 0.9rem;
+      border-radius: 100px;
+      font-weight: 500;
+      font-size: 0.75rem;
+      background: #1e2b3c;
+      color: #9bb5d4;
+      border: 1px solid #2e4057;
+    }
+
+    .badge.online {
+      background: #0b2b1f;
+      color: #6ee7b7;
+      border-color: #2b6e4e;
+    }
+
+    .badge.offline {
+      background: #2b1a1a;
+      color: #f87171;
+      border-color: #7f3d3d;
+    }
+
+    /* right column – handwriting canvas */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      background: #101720;
+      border-radius: 2rem;
+      border: 1px solid #27384d;
+      overflow: hidden;
+    }
+
+    .canvas-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 1.8rem 0.8rem 1.8rem;
+    }
+
+    .canvas-header h2 {
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: #c9defa;
+      letter-spacing: -0.01em;
+    }
+
+    .clear-btn {
+      background: #1b2a3a;
+      border: none;
+      color: #b0cbf0;
+      font-size: 0.8rem;
+      padding: 0.5rem 1.2rem;
+      border-radius: 100px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid #2f4057;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .clear-btn:hover {
+      background: #263a50;
+      color: #d7eaff;
+      border-color: #4b6d92;
+    }
+
+    .canvas-wrapper {
+      flex: 1;
+      padding: 0.2rem 1.8rem 1.8rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1.8 / 1;
+      background: #0d141e;
+      border-radius: 1.6rem;
+      border: 1px solid #253649;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1), 0 12px 30px -12px #000000;
+      cursor: crosshair;
+      display: block;
+      touch-action: none;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: #647b9b;
+      margin-top: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hint span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #3b82f6;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.5; transform: scale(0.9); }
+    }
+
+    .footer-note {
+      font-size: 0.7rem;
+      color: #3e536b;
+      margin-top: 0.5rem;
+      text-align: right;
+    }
+
+    @media (max-width: 1000px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+      }
+      body { padding: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="dashboard">
+  <!-- LEFT: telemetry -->
+  <div class="left-panel">
+    <div class="glove-header">
+      <div class="glove-icon">🧤</div>
+      <div>
+        <h1>Smart Glove</h1>
+        <div class="sub">Air Handwriting · FSR + MPU6050</div>
+      </div>
+    </div>
+
+    <!-- FSR card -->
+    <div class="card">
+      <div class="card-title">✋ FSR pressure sensors</div>
+      <div class="fsr-grid" id="fsrGrid">
+        <!-- generated by JS -->
+      </div>
+    </div>
+
+    <!-- MPU card -->
+    <div class="card">
+      <div class="card-title">🌀 MPU6050 motion</div>
+      <div class="mpu-grid">
+        <div class="mpu-item"><span class="mpu-key">AX</span><span class="mpu-val" id="axVal">—</span></div>
+        <div class="mpu-item"><span class="mpu-key">AY</span><span class="mpu-val" id="ayVal">—</span></div>
+        <div class="mpu-item"><span class="mpu-key">AZ</span><span class="mpu-val" id="azVal">—</span></div>
+        <div class="mpu-item"><span class="mpu-key">GX</span><span class="mpu-val" id="gxVal">—</span></div>
+        <div class="mpu-item"><span class="mpu-key">GY</span><span class="mpu-val" id="gyVal">—</span></div>
+        <div class="mpu-item"><span class="mpu-key">GZ</span><span class="mpu-val" id="gzVal">—</span></div>
+        <div class="mpu-item"><span class="mpu-key">Temp</span><span class="mpu-val" id="tempVal">—</span></div>
+        <div class="mpu-item"><span class="mpu-key">MPU</span><span class="mpu-val" id="mpuStatus">—</span></div>
+      </div>
+      <div class="status-row">
+        <span class="badge" id="wifiBadge">⚡ WiFi —</span>
+        <span class="badge" id="firebaseBadge">🔥 Firebase —</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: handwriting canvas -->
+  <div class="right-panel">
+    <div class="canvas-header">
+      <h2>✍️ Air handwriting canvas</h2>
+      <button class="clear-btn" id="clearCanvasBtn">Clear</button>
+    </div>
+    <div class="canvas-wrapper">
+      <canvas id="handwritingCanvas" width="1000" height="560"></canvas>
+      <div class="hint">
+        <span><span class="live-dot"></span> Draw with mouse / touch</span>
+        <span>FSR1 controls stroke</span>
+      </div>
+      <div class="footer-note">Glove data updates live · FSR1&nbsp;>&nbsp;400 draws</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  //  FIREBASE CONFIG (exactly as in ESP32)
+  // ============================================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyB6FVMUnIJTbqyIWW_K8_zHlsaDTazn9zk",
+    databaseURL: "https://project-903ed-default-rtdb.asia-southeast1.firebasedatabase.app",
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+  const latestRef = database.ref('/FSR_Monitor/latest');
+
+  // ============================================================
+  //  DOM ELEMENTS
+  // ============================================================
+  const fsrGrid = document.getElementById('fsrGrid');
+  const axVal = document.getElementById('axVal');
+  const ayVal = document.getElementById('ayVal');
+  const azVal = document.getElementById('azVal');
+  const gxVal = document.getElementById('gxVal');
+  const gyVal = document.getElementById('gyVal');
+  const gzVal = document.getElementById('gzVal');
+  const tempVal = document.getElementById('tempVal');
+  const mpuStatus = document.getElementById('mpuStatus');
+  const wifiBadge = document.getElementById('wifiBadge');
+  const firebaseBadge = document.getElementById('firebaseBadge');
+  const canvas = document.getElementById('handwritingCanvas');
+  const ctx = canvas.getContext('2d');
+  const clearBtn = document.getElementById('clearCanvasBtn');
+
+  // ============================================================
+  //  FSR UI (5 bars)
+  // ============================================================
+  const FSR_COUNT = 5;
+  const fsrBars = [];   // fill elements
+  const fsrValueSpans = [];
+
+  for (let i = 0; i < FSR_COUNT; i++) {
+    const item = document.createElement('div');
+    item.className = 'fsr-item';
+    item.innerHTML = `
+      <span class="fsr-label">FSR ${i+1}</span>
+      <div class="fsr-bar-bg"><div class="fsr-bar-fill" id="fsrFill${i}"></div></div>
+      <span class="fsr-value" id="fsrVal${i}">0</span>
+    `;
+    fsrGrid.appendChild(item);
+    fsrBars.push(document.getElementById(`fsrFill${i}`));
+    fsrValueSpans.push(document.getElementById(`fsrVal${i}`));
+  }
+
+  // ============================================================
+  //  HANDWRITING CANVAS (air drawing simulation)
+  // ============================================================
+  let isDrawing = false;
+  let lastX = 0, lastY = 0;
+
+  // scale factor for canvas resolution (1000x560) vs CSS display
+  function getCanvasCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;   // canvas physical width / CSS width
+    const scaleY = canvas.height / rect.height;
+
+    let clientX, clientY;
+    if (e.touches) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    const x = (clientX - rect.left) * scaleX;
+    const y = (clientY - rect.top) * scaleY;
+    return { x, y };
+  }
+
+  function startDrawing(e) {
+    e.preventDefault();
+    isDrawing = true;
+    const { x, y } = getCanvasCoords(e);
+    lastX = x;
+    lastY = y;
+    // draw a dot for immediate feedback
+    ctx.beginPath();
+    ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
+    ctx.fillStyle = '#b8d6ff';
+    ctx.fill();
+  }
+
+  function draw(e) {
+    if (!isDrawing) return;
+    e.preventDefault();
+    const { x, y } = getCanvasCoords(e);
+
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = '#7aa9e6';
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.shadowColor = '#3b82f6';
+    ctx.shadowBlur = 12;
+    ctx.stroke();
+    // soft glow effect
+    ctx.shadowBlur = 0;
+
+    lastX = x;
+    lastY = y;
+  }
+
+  function stopDrawing(e) {
+    if (e) e.preventDefault();
+    isDrawing = false;
+  }
+
+  // mouse events
+  canvas.addEventListener('mousedown', startDrawing);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', stopDrawing);
+  canvas.addEventListener('mouseleave', stopDrawing);
+
+  // touch events
+  canvas.addEventListener('touchstart', startDrawing, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', stopDrawing);
+  canvas.addEventListener('touchcancel', stopDrawing);
+
+  // clear canvas
+  clearBtn.addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  // initial clear (clean start)
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ============================================================
+  //  REALTIME DATABASE LISTENER
+  // ============================================================
+  latestRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (!data) {
+      // no data yet – still show "waiting" state, but keep badges
+      firebaseBadge.textContent = '🔥 Firebase — no data';
+      firebaseBadge.className = 'badge offline';
+      return;
+    }
+
+    // ----- FSR values (1..5) -----
+    for (let i = 0; i < FSR_COUNT; i++) {
+      const key = `fsr${i+1}`;
+      let raw = data[key];
+      // fallback if undefined
+      if (raw === undefined || raw === null) raw = 0;
+      // clamp 0..4095 (ESP32 12-bit)
+      const val = Math.min(4095, Math.max(0, raw));
+      const percent = (val / 4095) * 100;
+
+      // update bar + text
+      if (fsrBars[i]) fsrBars[i].style.width = percent + '%';
+      if (fsrValueSpans[i]) fsrValueSpans[i].textContent = val;
+    }
+
+    // ----- MPU6050 -----
+    axVal.textContent = (data.accel_x_g !== undefined) ? Number(data.accel_x_g).toFixed(3) : '—';
+    ayVal.textContent = (data.accel_y_g !== undefined) ? Number(data.accel_y_g).toFixed(3) : '—';
+    azVal.textContent = (data.accel_z_g !== undefined) ? Number(data.accel_z_g).toFixed(3) : '—';
+    gxVal.textContent = (data.gyro_x_dps !== undefined) ? Number(data.gyro_x_dps).toFixed(1) : '—';
+    gyVal.textContent = (data.gyro_y_dps !== undefined) ? Number(data.gyro_y_dps).toFixed(1) : '—';
+    gzVal.textContent = (data.gyro_z_dps !== undefined) ? Number(data.gyro_z_dps).toFixed(1) : '—';
+    tempVal.textContent = (data.mpu_temperature_c !== undefined) ? Number(data.mpu_temperature_c).toFixed(1) + ' °C' : '—';
+    mpuStatus.textContent = data.mpu_ok === true ? 'OK' : (data.mpu_ok === false ? 'ERROR' : '—');
+
+    // ----- WiFi & Firebase badges -----
+    // WiFi badge: we can't read WiFi status directly, but if data is present, glove is online via WiFi
+    wifiBadge.textContent = '⚡ WiFi — online';
+    wifiBadge.className = 'badge online';
+
+    firebaseBadge.textContent = '🔥 Firebase — synced';
+    firebaseBadge.className = 'badge online';
+  }, (error) => {
+    console.error('Firebase read error:', error);
+    firebaseBadge.textContent = '🔥 Firebase — error';
+    firebaseBadge.className = 'badge offline';
+    wifiBadge.textContent = '⚡ WiFi — unknown';
+    wifiBadge.className = 'badge';
+  });
+
+  // If we ever lose connection, show offline (no data for a while)
+  // Additional fallback: show offline after 8 seconds without update
+  let lastUpdateTime = Date.now();
+  latestRef.on('value', () => { lastUpdateTime = Date.now(); });
+
+  setInterval(() => {
+    if (Date.now() - lastUpdateTime > 8000) {
+      // no data for 8s -> likely offline
+      wifiBadge.textContent = '⚡ WiFi — offline?';
+      wifiBadge.className = 'badge offline';
+      firebaseBadge.textContent = '🔥 Firebase — stale';
+      firebaseBadge.className = 'badge offline';
+    }
+  }, 4000);
+
+  // ============================================================
+  //  EXTRA: FSR1 > 400 triggers a visual glow on canvas (air draw hint)
+  //  We'll add a subtle visual cue: if FSR1 is high, show a small ring.
+  //  (This doesn't interfere with manual drawing.)
+  // ============================================================
+  // We'll keep an eye on FSR1 bar and add a class to canvas wrapper if needed
+  // But to keep simple: not needed, but here's a tiny extra: change canvas border on FSR1 high?
+  // Actually nice touch: when fsr1 > 400, add "active" class to canvas wrapper
+  const canvasWrapper = document.querySelector('.canvas-wrapper');
+  latestRef.on('value', (snap) => {
+    const d = snap.val();
+    if (d && d.fsr1 !== undefined) {
+      if (d.fsr1 > 400) {
+        canvas.style.boxShadow = '0 0 0 2px rgba(96, 165, 250, 0.6), 0 12px 30px -12px #000';
+      } else {
+        canvas.style.boxShadow = '0 0 0 1px rgba(59, 130, 246, 0.1), 0 12px 30px -12px #000';
+      }
+    }
+  });
+
+  // ============================================================
+  //  initial UI sync (show dummy placeholder until first data)
+  // ============================================================
+  for (let i = 0; i < FSR_COUNT; i++) {
+    fsrBars[i].style.width = '0%';
+    fsrValueSpans[i].textContent = '0';
+  }
+
+  // set initial badges
+  wifiBadge.textContent = '⚡ WiFi — waiting';
+  wifiBadge.className = 'badge';
+  firebaseBadge.textContent = '🔥 Firebase — waiting';
+  firebaseBadge.className = 'badge';
+
+  // ============================================================
+  //  save a reference (just for fun – no extra functionality)
+  // ============================================================
+  console.log('Smart Glove dashboard ready. Listening to /FSR_Monitor/latest');
+
+</script>
+</body>
+</html>
